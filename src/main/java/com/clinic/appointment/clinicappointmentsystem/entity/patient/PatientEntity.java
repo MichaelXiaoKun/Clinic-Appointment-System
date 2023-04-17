@@ -16,19 +16,19 @@ public class PatientEntity extends AccountEntity {
 
     @Basic
     @Column(name = "POLICY_NUMBER")
-    private BigInteger policyNumber;
+    private String policyNumber;
 
     @Basic
     @Column(name = "GROUP_NUMBER")
-    private BigInteger groupNumber;
+    private String groupNumber;
 
     @Basic
     @Column(name = "BALANCE")
-    private BigInteger balance;
+    private int balance;
 
     @Basic
     @Column(name = "INSURANCE_PHONE")
-    private BigInteger insurancePhone;
+    private String insurancePhone;
 
     @Basic
     @Column(name = "EMERGENCY_FIRST_NAME")
@@ -40,7 +40,7 @@ public class PatientEntity extends AccountEntity {
 
     @Basic
     @Column(name = "EMERGENCY_PHONE_NUMBER")
-    private BigInteger emergencyPhoneNumber;
+    private String emergencyPhoneNumber;
 
     public String getInsuranceProvider() {
         return insuranceProvider;
@@ -50,35 +50,35 @@ public class PatientEntity extends AccountEntity {
         this.insuranceProvider = insuranceProvider;
     }
 
-    public BigInteger getPolicyNumber() {
+    public String getPolicyNumber() {
         return policyNumber;
     }
 
-    public void setPolicyNumber(BigInteger policyNumber) {
+    public void setPolicyNumber(String policyNumber) {
         this.policyNumber = policyNumber;
     }
 
-    public BigInteger getGroupNumber() {
+    public String getGroupNumber() {
         return groupNumber;
     }
 
-    public void setGroupNumber(BigInteger groupNumber) {
+    public void setGroupNumber(String groupNumber) {
         this.groupNumber = groupNumber;
     }
 
-    public BigInteger getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(BigInteger balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 
-    public BigInteger getInsurancePhone() {
+    public String getInsurancePhone() {
         return insurancePhone;
     }
 
-    public void setInsurancePhone(BigInteger insurancePhone) {
+    public void setInsurancePhone(String insurancePhone) {
         this.insurancePhone = insurancePhone;
     }
 
@@ -98,11 +98,11 @@ public class PatientEntity extends AccountEntity {
         this.emergencyLastName = emergencyLastName;
     }
 
-    public BigInteger getEmergencyPhoneNumber() {
+    public String getEmergencyPhoneNumber() {
         return emergencyPhoneNumber;
     }
 
-    public void setEmergencyPhoneNumber(BigInteger emergencyPhoneNumber) {
+    public void setEmergencyPhoneNumber(String emergencyPhoneNumber) {
         this.emergencyPhoneNumber = emergencyPhoneNumber;
     }
 

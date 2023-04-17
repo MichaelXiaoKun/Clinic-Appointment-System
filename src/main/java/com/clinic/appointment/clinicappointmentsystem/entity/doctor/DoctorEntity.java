@@ -3,7 +3,6 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
 import java.util.Objects;
 
 @Entity
@@ -20,7 +19,7 @@ public class DoctorEntity extends AccountEntity {
 
     @Basic
     @Column(name = "LICENSE_NUMBER")
-    private BigInteger licenseNumber;
+    private String licenseNumber;
 
     @Basic
     @Column(name = "BOARD_CERTIFICATION")
@@ -42,11 +41,11 @@ public class DoctorEntity extends AccountEntity {
         this.degree = degree;
     }
 
-    public BigInteger getLicenseNumber() {
+    public String getLicenseNumber() {
         return licenseNumber;
     }
 
-    public void setLicenseNumber(BigInteger licenseNumber) {
+    public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 

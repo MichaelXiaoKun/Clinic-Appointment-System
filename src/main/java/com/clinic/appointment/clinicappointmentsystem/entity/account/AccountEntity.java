@@ -31,7 +31,7 @@ public abstract class AccountEntity {
 
     @Basic
     @Column(name = "PHONE_NUMBER")
-    private int phoneNumber;
+    private String phoneNumber;
 
     @Basic
     @Column(name = "MIDDLE_NAME")
@@ -40,6 +40,10 @@ public abstract class AccountEntity {
     @Basic
     @Column(name = "ACCOUNT_TYPE")
     private String accountType;
+
+    @Basic
+    @Column(name = "EMAIL")
+    private String email;
 
     public String getUsername() {
         return username;
@@ -81,11 +85,11 @@ public abstract class AccountEntity {
         this.dob = dob;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -103,6 +107,14 @@ public abstract class AccountEntity {
 
     public void setAccountType(String accountType) {
         this.accountType = accountType;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
