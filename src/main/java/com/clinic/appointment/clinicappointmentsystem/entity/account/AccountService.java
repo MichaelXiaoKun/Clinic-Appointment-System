@@ -1,6 +1,5 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account;
 
-import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,35 +7,36 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AccountService {
-    @Autowired
-    private DoctorRepo doctorRepo;
+
+    private final DoctorRepo doctorRepo;
+    private final PatientRepo patientRepo;
 
     @Autowired
-    private PatientRepo patientRepo;
-
-    @Autowired
-    private AccountRepo accountRepo;
+    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo) {
+        this.doctorRepo = doctorRepo;
+        this.patientRepo = patientRepo;
+    }
 
     public List<AccountEntity> getAccountsByFirstNameAndLastName(String firstName, String lastName) {
         List<AccountEntity> accounts = new ArrayList<>();
-        if (doctorRepo.findDoctorEntitiesByFirstNameAndLastName(firstName, lastName).isPresent()) {
-            accounts.addAll(doctorRepo.findDoctorEntitiesByFirstNameAndLastName(firstName, lastName).get());
+        if (doctorRepo.findDoctorEntitiesByFirstNameAndLastName(firstName, lastName) != null) {
+            accounts.addAll(doctorRepo.findDoctorEntitiesByFirstNameAndLastName(firstName, lastName));
         }
-        if (patientRepo.findPatientEntitiesByFirstNameAndLastName(firstName, lastName).isPresent()) {
-            accounts.addAll(patientRepo.findPatientEntitiesByFirstNameAndLastName(firstName, lastName).get());
+        if (patientRepo.findPatientEntitiesByFirstNameAndLastName(firstName, lastName) != null) {
+            accounts.addAll(patientRepo.findPatientEntitiesByFirstNameAndLastName(firstName, lastName));
         }
         return accounts;
     }
 
-    public Optional<List<AccountEntity>> getDoctorsProfiles() {
-        return accountRepo.findAccountEntitiesByAccountType("DOCTOR");
-    }
+    public List<AccountEntity> getAllAccounts() {
+        List<AccountEntity> accounts = new ArrayList<>();
 
-    public Optional<List<AccountEntity>> getPatientProfiles() {
-        return accountRepo.findAccountEntitiesByAccountType("PATIENT");
+        accounts.addAll(doctorRepo.findAll());
+        accounts.addAll(patientRepo.findAll());
+
+        return accounts;
     }
 }

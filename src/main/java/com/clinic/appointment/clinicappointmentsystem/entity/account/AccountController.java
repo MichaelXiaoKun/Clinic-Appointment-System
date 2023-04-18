@@ -13,7 +13,7 @@ import static org.springframework.http.HttpStatus.*;
 
 
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping("/api/account")
 public class AccountController {
     @Autowired
     private AccountService accountService;
@@ -24,6 +24,12 @@ public class AccountController {
             @PathVariable("lastName") String lastName) {
 
         List<AccountEntity> accounts = accountService.getAccountsByFirstNameAndLastName(firstName, lastName);
+        return new ResponseEntity<>(accounts, OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<AccountEntity>> getAllAccounts() {
+        List<AccountEntity> accounts = accountService.getAllAccounts();
         return new ResponseEntity<>(accounts, OK);
     }
 }

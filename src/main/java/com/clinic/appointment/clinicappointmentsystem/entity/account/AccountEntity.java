@@ -10,27 +10,27 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class AccountEntity {
     @Id
-    @Column(name = "USERNAME")
+    @Column(name = "USERNAME", nullable = false)
     private String username;
 
     @Basic
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
     @Basic
-    @Column(name = "FIRST_NAME")
+    @Column(name = "FIRST_NAME", nullable = false)
     private String firstName;
 
     @Basic
-    @Column(name = "LAST_NAME")
+    @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
 
     @Basic
-    @Column(name = "DOB")
+    @Column(name = "DOB", nullable = false)
     private Date dob;
 
     @Basic
-    @Column(name = "PHONE_NUMBER")
+    @Column(name = "PHONE_NUMBER", nullable = false)
     private String phoneNumber;
 
     @Basic
@@ -38,11 +38,11 @@ public abstract class AccountEntity {
     private String middleName;
 
     @Basic
-    @Column(name = "ACCOUNT_TYPE")
+    @Column(name = "ACCOUNT_TYPE", nullable = false)
     private String accountType;
 
     @Basic
-    @Column(name = "EMAIL")
+    @Column(name = "EMAIL", nullable = false)
     private String email;
 
     public String getUsername() {

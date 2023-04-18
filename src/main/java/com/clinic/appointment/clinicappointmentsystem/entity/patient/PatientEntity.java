@@ -11,11 +11,11 @@ import java.util.Objects;
 @PrimaryKeyJoinColumn(name = "USERNAME")
 public class PatientEntity extends AccountEntity {
     @Basic
-    @Column(name = "INSURANCE_PROVIDER")
+    @Column(name = "INSURANCE_PROVIDER", nullable = false)
     private String insuranceProvider;
 
     @Basic
-    @Column(name = "POLICY_NUMBER")
+    @Column(name = "POLICY_NUMBER", nullable = false)
     private String policyNumber;
 
     @Basic
@@ -23,23 +23,23 @@ public class PatientEntity extends AccountEntity {
     private String groupNumber;
 
     @Basic
-    @Column(name = "BALANCE")
+    @Column(name = "BALANCE", nullable = false)
     private int balance;
 
     @Basic
-    @Column(name = "INSURANCE_PHONE")
+    @Column(name = "INSURANCE_PHONE", nullable = false)
     private String insurancePhone;
 
     @Basic
-    @Column(name = "EMERGENCY_FIRST_NAME")
+    @Column(name = "EMERGENCY_FIRST_NAME", nullable = false)
     private String emergencyFirstName;
 
     @Basic
-    @Column(name = "EMERGENCY_LAST_NAME")
+    @Column(name = "EMERGENCY_LAST_NAME", nullable = false)
     private String emergencyLastName;
 
     @Basic
-    @Column(name = "EMERGENCY_PHONE_NUMBER")
+    @Column(name = "EMERGENCY_PHONE_NUMBER", nullable = false)
     private String emergencyPhoneNumber;
 
     public String getInsuranceProvider() {
