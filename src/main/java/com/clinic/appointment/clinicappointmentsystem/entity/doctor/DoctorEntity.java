@@ -10,15 +10,15 @@ import java.util.Objects;
 @PrimaryKeyJoinColumn(name = "USERNAME")
 public class DoctorEntity extends AccountEntity {
     @Basic
-    @Column(name = "SPECIALTY")
+    @Column(name = "SPECIALTY", nullable = false)
     private String specialty;
 
     @Basic
-    @Column(name = "DEGREE")
+    @Column(name = "DEGREE", nullable = false)
     private String degree;
 
     @Basic
-    @Column(name = "LICENSE_NUMBER")
+    @Column(name = "LICENSE_NUMBER", nullable = false)
     private String licenseNumber;
 
     @Basic
