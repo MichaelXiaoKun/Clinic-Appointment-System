@@ -16,22 +16,20 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/api/accounts/doctors")
+@RequestMapping("/api/account/doctor")
 public class DoctorController {
     public static final String DOCTOR_DELETED_SUCCESSFULLY = "Doctor deleted successfully";
     public static final String DOCTOR_UPDATED_SUCCESSFULLY = "Doctor updated successfully";
     private final DoctorService doctorService;
-    private final AccountService accountService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, AccountService accountService) {
+    public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
-        this.accountService = accountService;
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<AccountEntity>> getAllDoctors() {
-        List<AccountEntity> allDoctors = accountService.getDoctorsProfiles();
+    public ResponseEntity<List<DoctorEntity>> getAllDoctorProfiles() {
+        List<DoctorEntity> allDoctors = doctorService.getAllDoctorProfiles();
         return new ResponseEntity<>(allDoctors, OK);
     }
 
@@ -64,7 +62,7 @@ public class DoctorController {
         return BuildResponse.build(NO_CONTENT, DOCTOR_DELETED_SUCCESSFULLY);
     }
 
-    @PutMapping("/{username}/{}")
+    @PutMapping("/{username}/")
     public ResponseEntity<HttpResponse> updateDoctorAccount(
             @PathVariable("username") String username,
             @RequestParam(value = "first_name", required = false) String firstName,

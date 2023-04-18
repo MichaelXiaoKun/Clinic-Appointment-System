@@ -13,13 +13,11 @@ public class AccountService {
 
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
-    private final AccountRepo accountRepo;
 
     @Autowired
-    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo, AccountRepo accountRepo) {
+    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo) {
         this.doctorRepo = doctorRepo;
         this.patientRepo = patientRepo;
-        this.accountRepo = accountRepo;
     }
 
     public List<AccountEntity> getAccountsByFirstNameAndLastName(String firstName, String lastName) {
@@ -33,11 +31,12 @@ public class AccountService {
         return accounts;
     }
 
-    public List<AccountEntity> getDoctorsProfiles() {
-        return accountRepo.findAccountEntitiesByAccountType("DOCTOR");
-    }
+    public List<AccountEntity> getAllAccounts() {
+        List<AccountEntity> accounts = new ArrayList<>();
 
-    public List<AccountEntity> getPatientProfiles() {
-        return accountRepo.findAccountEntitiesByAccountType("PATIENT");
+        accounts.addAll(doctorRepo.findAll());
+        accounts.addAll(patientRepo.findAll());
+
+        return accounts;
     }
 }

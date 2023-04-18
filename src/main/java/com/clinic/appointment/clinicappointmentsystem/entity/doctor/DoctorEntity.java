@@ -3,6 +3,7 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
 import jakarta.persistence.*;
 
+import java.sql.Date;
 import java.util.Objects;
 
 @Entity
@@ -55,6 +56,96 @@ public class DoctorEntity extends AccountEntity {
 
     public void setBoardCertification(String boardCertification) {
         this.boardCertification = boardCertification;
+    }
+
+    @Override
+    public String getUsername() {
+        return super.getUsername();
+    }
+
+    @Override
+    public void setUsername(String username) {
+        super.setUsername(username);
+    }
+
+    @Override
+    public String getPassword() {
+        return super.getPassword();
+    }
+
+    @Override
+    public void setPassword(String password) {
+        super.setPassword(password);
+    }
+
+    @Override
+    public String getFirstName() {
+        return super.getFirstName();
+    }
+
+    @Override
+    public void setFirstName(String firstName) {
+        super.setFirstName(firstName);
+    }
+
+    @Override
+    public String getLastName() {
+        return super.getLastName();
+    }
+
+    @Override
+    public void setLastName(String lastName) {
+        super.setLastName(lastName);
+    }
+
+    @Override
+    public Date getDob() {
+        return super.getDob();
+    }
+
+    @Override
+    public void setDob(Date dob) {
+        super.setDob(dob);
+    }
+
+    @Override
+    public String getPhoneNumber() {
+        return super.getPhoneNumber();
+    }
+
+    @Override
+    public void setPhoneNumber(String phoneNumber) {
+        super.setPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public String getMiddleName() {
+        return super.getMiddleName();
+    }
+
+    @Override
+    public void setMiddleName(String middleName) {
+        super.setMiddleName(middleName);
+    }
+
+    @Override
+    public String getAccountType() {
+        return super.getAccountType();
+    }
+
+    @Override
+    public void setAccountType(String accountType) {
+        super.setAccountType(accountType);
+    }
+
+    @Override
+    public String getEmail() {
+        return super.getEmail();
+    }
+
+    @Override
+    public void setEmail(String email) {
+        super.setEmail(email);
     }
 
     @Override

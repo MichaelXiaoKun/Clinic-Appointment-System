@@ -20,6 +20,10 @@ public class DoctorService {
         this.doctorRepo = doctorRepo;
     }
 
+    public List<DoctorEntity> getAllDoctorProfiles() {
+        return doctorRepo.findAll();
+    }
+
     public DoctorEntity getDoctorByUsername(String username) throws DoctorNotFoundException {
         Optional<DoctorEntity> doctor = doctorRepo.findById(username);
         if (doctor.isEmpty()) {
