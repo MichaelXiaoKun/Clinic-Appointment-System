@@ -10,38 +10,38 @@ import java.util.Objects;
 public class AppointmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "APPT_ID")
-    private String apptId;
+    @Column(name = "APPT_ID", nullable = false)
+    private int apptId;
 
     @Basic
-    @Column(name = "APPT_TITLE")
+    @Column(name = "APPT_TITLE", nullable = false)
     private String apptTitle;
 
     @Basic
-    @Column(name = "START_DATE")
+    @Column(name = "START_DATE", nullable = false)
     private Timestamp startDate;
 
     @Basic
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
     @Basic
-    @Column(name = "END_DATE")
+    @Column(name = "END_DATE", nullable = false)
     private Timestamp endDate;
 
     @Basic
-    @Column(name = "PATIENT_USERNAME")
+    @Column(name = "PATIENT_USERNAME", nullable = false)
     private String patientUsername;
 
     @Basic
-    @Column(name = "DOCTOR_USERNAME")
+    @Column(name = "DOCTOR_USERNAME", nullable = false)
     private String doctorUsername;
 
-    public String getApptId() {
+    public int getApptId() {
         return apptId;
     }
 
-    public void setApptId(String apptId) {
+    public void setApptId(int apptId) {
         this.apptId = apptId;
     }
 

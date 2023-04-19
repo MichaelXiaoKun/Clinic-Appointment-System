@@ -18,6 +18,11 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    @GetMapping("/greetings")
+    public ResponseEntity<String> sayHello() {
+        return ResponseEntity.ok("Hello! Bro, How are you?");
+    }
+
     @GetMapping("/{firstName}_{lastName}")
     public ResponseEntity<List<AccountEntity>> getAccountsByFirstNameAndLastName(
             @PathVariable("firstName") String firstName,
