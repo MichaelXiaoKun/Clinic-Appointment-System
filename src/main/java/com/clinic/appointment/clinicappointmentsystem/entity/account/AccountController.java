@@ -15,6 +15,7 @@ import static org.springframework.http.HttpStatus.*;
 @RestController
 @RequestMapping("/api/account")
 public class AccountController {
+
     @Autowired
     private AccountService accountService;
 

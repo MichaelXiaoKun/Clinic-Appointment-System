@@ -1,6 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
 import java.util.Objects;
@@ -8,7 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "ACCOUNT", schema = "CLINICADMIN")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class AccountEntity {
+public abstract class AccountEntity implements UserDetails {
     @Id
     @Column(name = "USERNAME", nullable = false)
     private String username;
