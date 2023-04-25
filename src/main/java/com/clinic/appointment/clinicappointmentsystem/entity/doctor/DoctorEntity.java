@@ -1,11 +1,23 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
+import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.sql.Date;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
+@Data
+@SuperBuilder
+@NoArgsConstructor
 @Entity
 @Table(name = "DOCTOR", schema = "CLINICADMIN")
 @PrimaryKeyJoinColumn(name = "USERNAME")
@@ -25,6 +37,17 @@ public class DoctorEntity extends AccountEntity {
     @Basic
     @Column(name = "BOARD_CERTIFICATION")
     private String boardCertification;
+
+//    public DoctorEntity(String specialty,
+//                        String degree,
+//                        String licenseNumber,
+//                        String boardCertification) {
+//        super();
+//        this.specialty = specialty;
+//        this.degree = degree;
+//        this.licenseNumber = licenseNumber;
+//        this.boardCertification = boardCertification;
+//    }
 
     public String getSpecialty() {
         return specialty;
@@ -64,8 +87,36 @@ public class DoctorEntity extends AccountEntity {
     }
 
     @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    @Override
     public void setUsername(String username) {
         super.setUsername(username);
+    }
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
