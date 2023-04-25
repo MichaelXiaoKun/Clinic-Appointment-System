@@ -1,6 +1,6 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.appointment;
 
-import com.clinic.appointment.clinicappointmentsystem.exception.AppointNotFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.AppointmentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +22,10 @@ public class AppointmentService {
         return appointmentRepo.findAll();
     }
 
-    public AppointmentEntity getAppointmentByID(int apptID) throws AppointNotFoundException {
+    public AppointmentEntity getAppointmentByID(int apptID) throws AppointmentNotFoundException {
         Optional<AppointmentEntity> appt = appointmentRepo.findById(apptID);
         if (appt.isEmpty()) {
-            throw new AppointNotFoundException("Appointment with ID: " + String.valueOf(apptID) + " is not found");
+            throw new AppointmentNotFoundException("Appointment with ID: " + String.valueOf(apptID) + " is not found");
         }
         return appt.get();
     }

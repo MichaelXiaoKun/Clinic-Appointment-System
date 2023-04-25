@@ -29,6 +29,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        System.out.println(request.getAccountType());
         String jwtToken = "";
         AccountEntity user = null;
         if (request.getAccountType().equalsIgnoreCase("DOCTOR")) {
