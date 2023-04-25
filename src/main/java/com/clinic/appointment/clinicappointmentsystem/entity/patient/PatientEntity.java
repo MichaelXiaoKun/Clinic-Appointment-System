@@ -3,6 +3,11 @@ package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -10,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@SuperBuilder
+@NoArgsConstructor
 @Entity
 @Table(name = "PATIENT", schema = "CLINICADMIN")
 @PrimaryKeyJoinColumn(name = "USERNAME")

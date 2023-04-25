@@ -1,11 +1,20 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
 import java.util.Objects;
 
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "ACCOUNT", schema = "CLINICADMIN")
 @Inheritance(strategy = InheritanceType.JOINED)
