@@ -2,7 +2,7 @@ package com.clinic.appointment.clinicappointmentsystem.entity.appointment;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorService;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientService;
-import com.clinic.appointment.clinicappointmentsystem.exception.AppointNotFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.AppointmentNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +40,7 @@ public class AppointmentController {
 
     @GetMapping("/{apptID}")
     public ResponseEntity<AppointmentEntity> getAppointmentByID(@PathVariable("apptID") int apptID)
-            throws AppointNotFoundException {
+            throws AppointmentNotFoundException {
         return new ResponseEntity<>(appointmentService.getAppointmentByID(apptID), OK);
     }
 

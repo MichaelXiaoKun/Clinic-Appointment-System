@@ -38,17 +38,6 @@ public class DoctorEntity extends AccountEntity {
     @Column(name = "BOARD_CERTIFICATION")
     private String boardCertification;
 
-//    public DoctorEntity(String specialty,
-//                        String degree,
-//                        String licenseNumber,
-//                        String boardCertification) {
-//        super();
-//        this.specialty = specialty;
-//        this.degree = degree;
-//        this.licenseNumber = licenseNumber;
-//        this.boardCertification = boardCertification;
-//    }
-
     public String getSpecialty() {
         return specialty;
     }
