@@ -1,11 +1,8 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
-import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
+import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;

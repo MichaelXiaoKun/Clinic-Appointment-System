@@ -1,8 +1,10 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
-import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +16,14 @@ import java.util.Optional;
 public class DoctorService {
 
     private final DoctorRepo doctorRepo;
+    private final LoginAttemptService loginAttemptService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public DoctorService(DoctorRepo doctorRepo) {
+    public DoctorService(DoctorRepo doctorRepo, LoginAttemptService loginAttemptService, PasswordEncoder passwordEncoder) {
         this.doctorRepo = doctorRepo;
+        this.loginAttemptService = loginAttemptService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<DoctorEntity> getAllDoctorProfiles() {
@@ -36,12 +42,27 @@ public class DoctorService {
         return doctorRepo.findDoctorEntitiesByFirstNameAndLastName(firstName, lastName);
     }
 
-    public void createDoctor(DoctorEntity doctorEntity) throws DoctorUsernameFoundException {
-        Optional<DoctorEntity> doctor = doctorRepo.findById(doctorEntity.getUsername());
-        if (doctor.isPresent()) {
-            throw new DoctorUsernameFoundException("Doctor with username: " + doctorEntity.getUsername() + " already exists");
+    public DoctorEntity resetPassword(String username, String new_password) {
+        DoctorEntity foundDoctor = doctorRepo.findById(username).orElseThrow(
+                () -> new UsernameNotFoundException("Doctor with username " + username + " not found")
+        );
+
+        foundDoctor.setPassword(passwordEncoder.encode(new_password));
+        doctorRepo.save(foundDoctor);
+        return foundDoctor;
+    }
+
+    private void validateLoginAttempt(DoctorEntity doctorEntity) {
+
+        if (doctorEntity.isAccountNonLocked()) {
+////            if (loginAttemptService.attemptsGreaterThanAllowed(doctorEntity.getUsername())) {
+////                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO TRUE
+////            } else {
+////                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO FALSE
+////            }
+        } else {
+            loginAttemptService.deleteUserFromLoginAttemptCache(doctorEntity.getUsername());
         }
-        doctorRepo.save(doctorEntity);
     }
 
     @Transactional

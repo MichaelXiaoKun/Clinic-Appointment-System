@@ -1,7 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
-import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.AuthenticationService;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,14 @@ public class DoctorController {
     public static final String DOCTOR_DELETED_SUCCESSFULLY = "Doctor deleted successfully";
     public static final String DOCTOR_UPDATED_SUCCESSFULLY = "Doctor updated successfully";
     private final DoctorService doctorService;
+    private final AuthenticationService service;
 
     @Autowired
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService, AuthenticationService service) {
         this.doctorService = doctorService;
+        this.service = service;
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<DoctorEntity>> getAllDoctorProfiles() {
@@ -46,11 +49,12 @@ public class DoctorController {
         return new ResponseEntity<>(doctors, OK);
     }
 
-    @PostMapping
-    public ResponseEntity<DoctorEntity> createDoctorAccount(@RequestBody DoctorEntity doctorEntity)
-            throws DoctorUsernameFoundException {
-        doctorService.createDoctor(doctorEntity);
-        return new ResponseEntity<>(doctorEntity, CREATED);
+    private record NewPasswordRequest(String username, String password) {}
+
+    @PostMapping("/resetpassword")
+    public ResponseEntity<DoctorEntity> resetPassword(@RequestBody NewPasswordRequest request) {
+        DoctorEntity doctorEntity = doctorService.resetPassword(request.username(), request.password());
+        return new ResponseEntity<>(doctorEntity, ACCEPTED);
     }
 
     @DeleteMapping("/{username}")
