@@ -8,6 +8,7 @@ import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientRepo;
+import com.clinic.appointment.clinicappointmentsystem.exception.DoctorFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,11 +29,15 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) throws DoctorFoundException {
         System.out.println(request.getAccountType());
         String jwtToken = "";
         AccountEntity user = null;
         if (request.getAccountType().equalsIgnoreCase("DOCTOR")) {
+            Optional<DoctorEntity> doctor = doctorRepo.findById(request.getUsername());
+            if (doctor.isPresent()) {
+                throw new DoctorFoundException("Account with Username " + request.getUsername() + " already exists");
+            }
             user = DoctorEntity.builder()
                     // Doctor Info
                     .specialty(request.getSpecialty())
