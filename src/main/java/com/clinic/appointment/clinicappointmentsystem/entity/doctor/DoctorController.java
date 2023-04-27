@@ -1,10 +1,8 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
-import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
-import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountService;
-import com.clinic.appointment.clinicappointmentsystem.exception.DoctorFoundException;
-import com.clinic.appointment.clinicappointmentsystem.exception.DoctorNotFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +33,7 @@ public class DoctorController {
 
     @GetMapping("/username={username}")
     public ResponseEntity<DoctorEntity> getDoctorByUsername(@PathVariable("username") String username)
-            throws DoctorNotFoundException {
+            throws DoctorUsernameNotFoundException {
         DoctorEntity doctor = doctorService.getDoctorByUsername(username);
         return new ResponseEntity<>(doctor, OK);
     }
@@ -50,14 +48,14 @@ public class DoctorController {
 
     @PostMapping
     public ResponseEntity<DoctorEntity> createDoctorAccount(@RequestBody DoctorEntity doctorEntity)
-            throws DoctorFoundException {
+            throws DoctorUsernameFoundException {
         doctorService.createDoctor(doctorEntity);
         return new ResponseEntity<>(doctorEntity, CREATED);
     }
 
     @DeleteMapping("/{username}")
     public ResponseEntity<HttpResponse> deleteDoctorAccount(@PathVariable("username") String username)
-            throws DoctorNotFoundException {
+            throws DoctorUsernameNotFoundException {
         doctorService.deleteDoctor(username);
         return BuildResponse.build(NO_CONTENT, DOCTOR_DELETED_SUCCESSFULLY);
     }
@@ -75,7 +73,7 @@ public class DoctorController {
             @RequestParam(value = "degree", required = false) String degree,
             @RequestParam(value = "license_number", required = false) String licenseNumber,
             @RequestParam(value = "boardCertification", required = false) String boardCertification)
-            throws DoctorNotFoundException {
+            throws DoctorUsernameNotFoundException {
 
         doctorService.updateDoctor(username,
                                     firstName,

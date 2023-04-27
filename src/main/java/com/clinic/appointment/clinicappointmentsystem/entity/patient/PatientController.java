@@ -1,8 +1,8 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
-import com.clinic.appointment.clinicappointmentsystem.exception.PatientFoundException;
-import com.clinic.appointment.clinicappointmentsystem.exception.PatientNotFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,21 +33,21 @@ public class PatientController {
 
     @GetMapping("/{username}")
     public ResponseEntity<PatientEntity> getPatientByUsername(@PathVariable("username") String username)
-            throws PatientNotFoundException {
+            throws PatientUsernameNotFoundException {
         PatientEntity patient = patientService.getPatientByUsername(username);
         return new ResponseEntity<>(patient, OK);
     }
 
     @PostMapping
     public ResponseEntity<PatientEntity> createPatient(@RequestBody PatientEntity patientEntity)
-            throws PatientFoundException {
+            throws PatientUsernameFoundException {
         patientService.createPatient(patientEntity);
         return new ResponseEntity<>(patientEntity, CREATED);
     }
 
     @DeleteMapping("/{username}")
     public ResponseEntity<HttpResponse> deletePatient(@PathVariable("username") String username)
-            throws PatientNotFoundException {
+            throws PatientUsernameNotFoundException {
         patientService.deletePatientByUsername(username);
         return BuildResponse.build(NO_CONTENT, PATIENT_DELETED_SUCCESSFULLY);
     }
@@ -69,7 +69,7 @@ public class PatientController {
             @RequestParam(name = "emergencyFirstName", required = false) String emergencyFirstName,
             @RequestParam(name = "emergencyLastName", required = false) String emergencyLastName,
             @RequestParam(name = "emergencyPhoneNumber", required = false) String emergencyPhoneNumber)
-            throws PatientNotFoundException {
+            throws PatientUsernameNotFoundException {
 
         patientService.updatePatient(username, firstName, lastName,
                 phoneNumber, dob, middleName,

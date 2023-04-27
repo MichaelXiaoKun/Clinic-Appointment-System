@@ -1,7 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
-import com.clinic.appointment.clinicappointmentsystem.exception.DoctorFoundException;
-import com.clinic.appointment.clinicappointmentsystem.exception.DoctorNotFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +24,10 @@ public class DoctorService {
         return doctorRepo.findAll();
     }
 
-    public DoctorEntity getDoctorByUsername(String username) throws DoctorNotFoundException {
+    public DoctorEntity getDoctorByUsername(String username) throws DoctorUsernameNotFoundException {
         Optional<DoctorEntity> doctor = doctorRepo.findById(username);
         if (doctor.isEmpty()) {
-            throw new DoctorNotFoundException("Doctor with username: " + username + " not found");
+            throw new DoctorUsernameNotFoundException("Doctor with username: " + username + " not found");
         }
         return doctor.get();
     }
@@ -36,10 +36,10 @@ public class DoctorService {
         return doctorRepo.findDoctorEntitiesByFirstNameAndLastName(firstName, lastName);
     }
 
-    public void createDoctor(DoctorEntity doctorEntity) throws DoctorFoundException {
+    public void createDoctor(DoctorEntity doctorEntity) throws DoctorUsernameFoundException {
         Optional<DoctorEntity> doctor = doctorRepo.findById(doctorEntity.getUsername());
         if (doctor.isPresent()) {
-            throw new DoctorFoundException("Doctor with username: " + doctorEntity.getUsername() + " already exists");
+            throw new DoctorUsernameFoundException("Doctor with username: " + doctorEntity.getUsername() + " already exists");
         }
         doctorRepo.save(doctorEntity);
     }
@@ -55,11 +55,11 @@ public class DoctorService {
                              String specialty,
                              String degree,
                              String licenseNumber,
-                             String boardCertification) throws DoctorNotFoundException {
+                             String boardCertification) throws DoctorUsernameNotFoundException {
 
         Optional<DoctorEntity> doctor = doctorRepo.findById(username);
         if (doctor.isEmpty()) {
-            throw new DoctorNotFoundException("Doctor with username: " + username + " not found");
+            throw new DoctorUsernameNotFoundException("Doctor with username: " + username + " not found");
         }
 
         DoctorEntity foundDoctor = doctor.get();
@@ -97,10 +97,10 @@ public class DoctorService {
         doctorRepo.save(foundDoctor);
     }
 
-    public void deleteDoctor(String username) throws DoctorNotFoundException {
+    public void deleteDoctor(String username) throws DoctorUsernameNotFoundException {
         Optional<DoctorEntity> doctor = doctorRepo.findById(username);
         if (doctor.isEmpty()) {
-            throw new DoctorNotFoundException("Doctor with username: " + username + " not found");
+            throw new DoctorUsernameNotFoundException("Doctor with username: " + username + " not found");
         }
         doctorRepo.deleteById(username);
     }
