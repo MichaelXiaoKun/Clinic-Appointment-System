@@ -3,7 +3,6 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;

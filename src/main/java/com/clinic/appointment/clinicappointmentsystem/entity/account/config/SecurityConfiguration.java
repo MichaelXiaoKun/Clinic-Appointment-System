@@ -1,6 +1,5 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,9 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
-import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.AuthenticationService;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorController;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,12 @@ public class PatientController {
     public static final String PATIENT_DELETED_SUCCESSFULLY = "Patient deleted successfully";
     public static final String PATIENT_UPDATED_SUCCESSFULLY = "Patient updated successfully";
     private final PatientService patientService;
+    private final AuthenticationService service;
 
     @Autowired
-    public PatientController(PatientService patientService) {
+    public PatientController(PatientService patientService, AuthenticationService service) {
         this.patientService = patientService;
+        this.service = service;
     }
 
     @GetMapping("/all")
@@ -38,11 +42,12 @@ public class PatientController {
         return new ResponseEntity<>(patient, OK);
     }
 
-    @PostMapping
-    public ResponseEntity<PatientEntity> createPatient(@RequestBody PatientEntity patientEntity)
-            throws PatientUsernameFoundException {
-        patientService.createPatient(patientEntity);
-        return new ResponseEntity<>(patientEntity, CREATED);
+    private record NewPasswordRequest(String username, String password) {}
+
+    @PostMapping("/resetpassword")
+    public ResponseEntity<PatientEntity> resetPassword(@RequestBody NewPasswordRequest request) {
+        PatientEntity patientEntity = patientService.resetPassword(request.username(), request.password());
+        return new ResponseEntity<>(patientEntity, ACCEPTED);
     }
 
     @DeleteMapping("/{username}")
