@@ -1,18 +1,16 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account.auth;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
-import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientRepo;
-import com.clinic.appointment.clinicappointmentsystem.exception.DoctorFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,14 +27,14 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) throws DoctorFoundException {
+    public AuthenticationResponse register(RegisterRequest request) throws DoctorUsernameFoundException {
         System.out.println(request.getAccountType());
         String jwtToken = "";
         AccountEntity user = null;
         if (request.getAccountType().equalsIgnoreCase("DOCTOR")) {
             Optional<DoctorEntity> doctor = doctorRepo.findById(request.getUsername());
             if (doctor.isPresent()) {
-                throw new DoctorFoundException("Account with Username " + request.getUsername() + " already exists");
+                throw new DoctorUsernameFoundException("Account with Username " + request.getUsername() + " already exists");
             }
             user = DoctorEntity.builder()
                     // Doctor Info
