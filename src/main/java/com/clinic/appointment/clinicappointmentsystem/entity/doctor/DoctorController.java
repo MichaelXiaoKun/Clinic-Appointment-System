@@ -33,14 +33,14 @@ public class DoctorController {
         return new ResponseEntity<>(allDoctors, OK);
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/username={username}")
     public ResponseEntity<DoctorEntity> getDoctorByUsername(@PathVariable("username") String username)
             throws DoctorNotFoundException {
         DoctorEntity doctor = doctorService.getDoctorByUsername(username);
         return new ResponseEntity<>(doctor, OK);
     }
 
-    @GetMapping("/{firstName}_{lastName}")
+    @GetMapping("/firstname={firstName}_lastname={lastName}")
     public ResponseEntity<List<DoctorEntity>> getDoctorsByFirstNameAndLastName(
             @PathVariable("firstName") String firstName,
             @PathVariable("lastName") String lastName) {
