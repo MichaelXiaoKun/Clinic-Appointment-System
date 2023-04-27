@@ -1,11 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
-import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity;
-import com.clinic.appointment.clinicappointmentsystem.exception.DoctorNotFoundException;
-import com.clinic.appointment.clinicappointmentsystem.exception.PatientFoundException;
-import com.clinic.appointment.clinicappointmentsystem.exception.PatientNotFoundException;
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,26 +24,26 @@ public class PatientService {
         return patientRepo.findAll();
     }
 
-    public PatientEntity getPatientByUsername(String username) throws PatientNotFoundException {
+    public PatientEntity getPatientByUsername(String username) throws PatientUsernameNotFoundException {
         Optional<PatientEntity> patient = patientRepo.findById(username);
         if (patient.isEmpty()) {
-            throw new PatientNotFoundException("Patient with username: " + username + " not found");
+            throw new PatientUsernameNotFoundException("Patient with username: " + username + " not found");
         }
         return patient.get();
     }
 
-    public void createPatient(PatientEntity patientEntity) throws PatientFoundException {
+    public void createPatient(PatientEntity patientEntity) throws PatientUsernameFoundException {
         Optional<PatientEntity> patient = patientRepo.findById(patientEntity.getUsername());
         if (patient.isPresent()) {
-            throw new PatientFoundException("Patient with username: " + patientEntity.getUsername() + " already exists");
+            throw new PatientUsernameFoundException("Patient with username: " + patientEntity.getUsername() + " already exists");
         }
         patientRepo.save(patientEntity);
     }
 
-    public void deletePatientByUsername(String username) throws PatientNotFoundException {
+    public void deletePatientByUsername(String username) throws PatientUsernameNotFoundException {
         Optional<PatientEntity> patient = patientRepo.findById(username);
         if (patient.isEmpty()) {
-            throw new PatientNotFoundException("Patient with username: \" + username + \" not found");
+            throw new PatientUsernameNotFoundException("Patient with username: \" + username + \" not found");
         }
 
         patientRepo.deleteById(username);
@@ -68,11 +64,11 @@ public class PatientService {
                               String insurancePhone,
                               String emergencyFirstName,
                               String emergencyLastName,
-                              String emergencyPhoneNumber) throws PatientNotFoundException {
+                              String emergencyPhoneNumber) throws PatientUsernameNotFoundException {
 
         Optional<PatientEntity> patient = patientRepo.findById(username);
         if (patient.isEmpty()) {
-            throw new PatientNotFoundException("Patient with username: " + username + " not found");
+            throw new PatientUsernameNotFoundException("Patient with username: " + username + " not found");
         }
 
         PatientEntity foundPatient = patient.get();

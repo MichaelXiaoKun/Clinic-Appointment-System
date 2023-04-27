@@ -1,6 +1,6 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account.auth;
 
-import com.clinic.appointment.clinicappointmentsystem.exception.DoctorFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request)
-            throws DoctorFoundException {
+            throws DoctorUsernameFoundException {
         return new ResponseEntity<>(service.register(request), CREATED);
     }
 
