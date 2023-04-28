@@ -2,7 +2,7 @@ package com.clinic.appointment.clinicappointmentsystem.entity.account.user;
 
 public enum Role {
 
-    PATIENT("ROLE_USER"),
+    PATIENT("ROLE_PATIENT"),
     DOCTOR("ROLE_DOCTOR"),
     ADMIN("ROLE_ADMIN");
 

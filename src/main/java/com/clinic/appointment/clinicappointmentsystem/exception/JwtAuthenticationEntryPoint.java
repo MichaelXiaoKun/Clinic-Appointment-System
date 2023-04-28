@@ -10,7 +10,6 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
