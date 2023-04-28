@@ -2,18 +2,17 @@ package com.clinic.appointment.clinicappointmentsystem.exception;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestControllerAdvice
 public class ExceptionHandling {
-
-    private static final String ERROR_PATH = "/error";
-    private static final String PAGE_NOT_FOUND = "There is not mapping for this URL";
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(
@@ -46,5 +45,10 @@ public class ExceptionHandling {
     @ExceptionHandler(PatientUsernameFoundException.class)
     public ResponseEntity<HttpResponse> patientUsernameFoundException(PatientUsernameFoundException exception) {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<HttpResponse> expiredJwtException(ExpiredJwtException exception) {
+        return createHttpResponse(UNAUTHORIZED, exception.getMessage());
     }
 }

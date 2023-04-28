@@ -50,6 +50,9 @@ public class PatientEntity extends AccountEntity {
     @Column(name = "EMERGENCY_PHONE_NUMBER", nullable = false)
     private String emergencyPhoneNumber;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public String getInsuranceProvider() {
         return insuranceProvider;
     }
@@ -145,12 +148,9 @@ public class PatientEntity extends AccountEntity {
         );
     }
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
 
     @Override
