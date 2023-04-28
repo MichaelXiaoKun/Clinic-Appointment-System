@@ -7,4 +7,6 @@ import java.util.List;
 public interface PatientRepo extends JpaRepository<PatientEntity, String> {
 
     List<PatientEntity> findPatientEntitiesByFirstNameAndLastName(String firstName, String lastName);
+
+    List<PatientEntity> findPatientEntitiesByEmail(String email);
 }

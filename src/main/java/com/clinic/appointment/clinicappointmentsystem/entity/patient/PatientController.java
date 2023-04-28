@@ -1,7 +1,6 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
-import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameFoundException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +37,10 @@ public class PatientController {
         return new ResponseEntity<>(patient, OK);
     }
 
-    @PostMapping
-    public ResponseEntity<PatientEntity> createPatient(@RequestBody PatientEntity patientEntity)
-            throws PatientUsernameFoundException {
-        patientService.createPatient(patientEntity);
-        return new ResponseEntity<>(patientEntity, CREATED);
+    @PostMapping("/resetpassword")
+    public ResponseEntity<PatientEntity> resetPassword(@RequestBody NewPasswordRequest request) {
+        PatientEntity patientEntity = patientService.resetPassword(request.username(), request.password());
+        return new ResponseEntity<>(patientEntity, ACCEPTED);
     }
 
     @DeleteMapping("/{username}")
@@ -52,7 +50,7 @@ public class PatientController {
         return BuildResponse.build(NO_CONTENT, PATIENT_DELETED_SUCCESSFULLY);
     }
 
-    @PutMapping("/{username}/")
+    @PutMapping("/{username}")
     public ResponseEntity<HttpResponse> updatePatient(
             @PathVariable("username") String username,
             @RequestParam(name = "first_name", required = false) String firstName,
@@ -78,5 +76,8 @@ public class PatientController {
                 emergencyFirstName, emergencyLastName, emergencyPhoneNumber);
 
         return BuildResponse.build(ACCEPTED, PATIENT_UPDATED_SUCCESSFULLY);
+    }
+
+    private record NewPasswordRequest(String username, String password) {
     }
 }

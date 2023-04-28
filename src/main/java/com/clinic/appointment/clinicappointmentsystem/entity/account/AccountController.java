@@ -1,6 +1,6 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.OK;
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/account")
 public class AccountController {
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @GetMapping("/greetings")
     public ResponseEntity<String> sayHello() {
@@ -38,4 +38,5 @@ public class AccountController {
         List<AccountEntity> accounts = accountService.getAllAccounts();
         return new ResponseEntity<>(accounts, OK);
     }
+
 }

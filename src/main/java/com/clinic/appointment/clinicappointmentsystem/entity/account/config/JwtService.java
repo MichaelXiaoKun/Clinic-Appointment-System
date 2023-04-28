@@ -1,10 +1,9 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +18,17 @@ public class JwtService {
 
     private static final String SECRET_KEY = "482B4D6251655468576D5A7133743677397A24432646294A404E635266556A58";
 
-    public String extractUsername(String jwtToken) {
+    public String extractUsername(String jwtToken)
+            throws ExpiredJwtException, SignatureException, UnsupportedJwtException,
+            MalformedJwtException, IllegalArgumentException {
+
         return extractClaim(jwtToken, Claims::getSubject);
     }
 
-    public <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver) {
+    public <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver)
+            throws ExpiredJwtException, SignatureException, UnsupportedJwtException,
+            MalformedJwtException, IllegalArgumentException {
+
         final Claims claims = extractAllClaims(jwtToken);
         return claimsResolver.apply(claims);
     }
@@ -50,11 +55,16 @@ public class JwtService {
         return extractExpiration(jwtToken).before(new Date());
     }
 
-    private Date extractExpiration(String jwtToken) {
-         return extractClaim(jwtToken, Claims::getExpiration);
+    private Date extractExpiration(String jwtToken) throws ExpiredJwtException, SignatureException,
+            UnsupportedJwtException, MalformedJwtException, IllegalArgumentException {
+
+        return extractClaim(jwtToken, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String jwtToken) {
+    private Claims extractAllClaims(String jwtToken)
+            throws ExpiredJwtException, SignatureException, UnsupportedJwtException,
+            MalformedJwtException, IllegalArgumentException {
+
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()

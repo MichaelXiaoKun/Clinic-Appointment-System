@@ -1,11 +1,8 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
-import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
+import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,6 +49,9 @@ public class PatientEntity extends AccountEntity {
     @Basic
     @Column(name = "EMERGENCY_PHONE_NUMBER", nullable = false)
     private String emergencyPhoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public String getInsuranceProvider() {
         return insuranceProvider;
@@ -148,12 +148,9 @@ public class PatientEntity extends AccountEntity {
         );
     }
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
 
     @Override

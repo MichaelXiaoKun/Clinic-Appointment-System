@@ -3,7 +3,6 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.user.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -37,6 +36,9 @@ public class DoctorEntity extends AccountEntity {
     @Basic
     @Column(name = "BOARD_CERTIFICATION")
     private String boardCertification;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public String getSpecialty() {
         return specialty;
@@ -76,6 +78,11 @@ public class DoctorEntity extends AccountEntity {
     }
 
     @Override
+    public void setUsername(String username) {
+        super.setUsername(username);
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -96,16 +103,8 @@ public class DoctorEntity extends AccountEntity {
     }
 
     @Override
-    public void setUsername(String username) {
-        super.setUsername(username);
-    }
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
 
     @Override
