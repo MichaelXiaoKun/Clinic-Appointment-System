@@ -42,7 +42,7 @@ public class AuthenticationService {
                     .degree(request.getDegree())
                     .licenseNumber(request.getLicenseNumber())
                     .boardCertification(request.getBoardCertification())
-                    .role(Role.USER)
+                    .role(Role.DOCTOR)
                     // Profile Info
                     .firstName(request.getFirstName())
                     .lastName(request.getLastName())
@@ -70,7 +70,7 @@ public class AuthenticationService {
                     .emergencyFirstName(request.getEmergencyFirstName())
                     .emergencyLastName(request.getEmergencyLastName())
                     .emergencyPhoneNumber(request.getEmergencyPhoneNumber())
-                    .role(Role.USER)
+                    .role(Role.PATIENT)
                     // Profile Info
                     .firstName(request.getFirstName())
                     .lastName(request.getLastName())
@@ -79,7 +79,7 @@ public class AuthenticationService {
                     .dob(request.getDob())
                     .phoneNumber(request.getPhoneNumber())
                     .middleName(request.getMiddleName())
-                    .accountType("DOCTOR")
+                    .accountType("PATIENT")
                     .email(request.getEmail())
                     .build();
 

@@ -37,6 +37,9 @@ public class DoctorEntity extends AccountEntity {
     @Column(name = "BOARD_CERTIFICATION")
     private String boardCertification;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public String getSpecialty() {
         return specialty;
     }
@@ -75,6 +78,11 @@ public class DoctorEntity extends AccountEntity {
     }
 
     @Override
+    public void setUsername(String username) {
+        super.setUsername(username);
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -95,16 +103,8 @@ public class DoctorEntity extends AccountEntity {
     }
 
     @Override
-    public void setUsername(String username) {
-        super.setUsername(username);
-    }
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
 
     @Override

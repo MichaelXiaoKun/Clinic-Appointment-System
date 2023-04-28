@@ -1,7 +1,6 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
-import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.AuthenticationService;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,10 @@ public class DoctorController {
     public static final String DOCTOR_DELETED_SUCCESSFULLY = "Doctor deleted successfully";
     public static final String DOCTOR_UPDATED_SUCCESSFULLY = "Doctor updated successfully";
     private final DoctorService doctorService;
-    private final AuthenticationService service;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, AuthenticationService service) {
+    public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
-        this.service = service;
     }
 
 
@@ -49,8 +46,6 @@ public class DoctorController {
         return new ResponseEntity<>(doctors, OK);
     }
 
-    private record NewPasswordRequest(String username, String password) {}
-
     @PostMapping("/resetpassword")
     public ResponseEntity<DoctorEntity> resetPassword(@RequestBody NewPasswordRequest request) {
         DoctorEntity doctorEntity = doctorService.resetPassword(request.username(), request.password());
@@ -64,7 +59,7 @@ public class DoctorController {
         return BuildResponse.build(NO_CONTENT, DOCTOR_DELETED_SUCCESSFULLY);
     }
 
-    @PutMapping("/{username}/")
+    @PutMapping("/{username}")
     public ResponseEntity<HttpResponse> updateDoctorAccount(
             @PathVariable("username") String username,
             @RequestParam(value = "first_name", required = false) String firstName,
@@ -80,17 +75,20 @@ public class DoctorController {
             throws DoctorUsernameNotFoundException {
 
         doctorService.updateDoctor(username,
-                                    firstName,
-                                    lastName,
-                                    phoneNumber,
-                                    dob,
-                                    middleName,
-                                    email,
-                                    specialty,
-                                    degree,
-                                    licenseNumber,
-                                    boardCertification);
+                firstName,
+                lastName,
+                phoneNumber,
+                dob,
+                middleName,
+                email,
+                specialty,
+                degree,
+                licenseNumber,
+                boardCertification);
 
         return BuildResponse.build(ACCEPTED, DOCTOR_UPDATED_SUCCESSFULLY);
+    }
+
+    private record NewPasswordRequest(String username, String password) {
     }
 }

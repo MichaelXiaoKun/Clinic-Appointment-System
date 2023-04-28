@@ -2,21 +2,16 @@ package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity;
-import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorService;
-import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameFoundException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class PatientService {
@@ -111,7 +106,7 @@ public class PatientService {
         }
 
         PatientEntity foundPatient = patient.get();
-        
+
         if (firstName != null) {
             foundPatient.setFirstName(firstName);
         }
