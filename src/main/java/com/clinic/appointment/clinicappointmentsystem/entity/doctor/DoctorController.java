@@ -75,7 +75,7 @@ public class DoctorController {
         return new ResponseEntity<>(doctors, OK);
     }
 
-    @GetMapping("/doctorView/profile")
+    @GetMapping("/doctorView/myProfile")
     public ResponseEntity<DoctorEntity> getMyProfile(@RequestHeader("Authorization") String authHeader)
             throws DoctorUsernameNotFoundException {
 
@@ -96,7 +96,7 @@ public class DoctorController {
         return BuildResponse.build(NO_CONTENT, DOCTOR_PASSWORD_RESET_SUCCESSFULLY);
     }
 
-    @DeleteMapping("/doctorView/deleteDoctor")
+    @DeleteMapping("/doctorView/deleteMyProfile")
     public ResponseEntity<HttpResponse> deleteDoctorAccount(
             @RequestHeader("Authorization") String authHeader,
             @RequestParam(value = "password") String password)
@@ -108,7 +108,7 @@ public class DoctorController {
         return BuildResponse.build(NO_CONTENT, DOCTOR_DELETED_SUCCESSFULLY);
     }
 
-    @PutMapping("/doctorView/updateDoctor")
+    @PutMapping("/doctorView/updateMyProfile")
     public ResponseEntity<HttpResponse> updateDoctorAccount(
             @PathVariable("username") String username,
             @RequestParam(value = "first_name", required = false) String firstName,
