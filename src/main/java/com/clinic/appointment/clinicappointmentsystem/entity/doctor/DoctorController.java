@@ -1,7 +1,9 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
+import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PasswordMismatchException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,28 +19,43 @@ import static org.springframework.http.HttpStatus.*;
 public class DoctorController {
     public static final String DOCTOR_DELETED_SUCCESSFULLY = "Doctor deleted successfully";
     public static final String DOCTOR_UPDATED_SUCCESSFULLY = "Doctor updated successfully";
+    public static final String DOCTOR_PASSWORD_RESET_SUCCESSFULLY = "Doctor password reset successfully";
     private final DoctorService doctorService;
+    private final JwtService jwtService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService, JwtService jwtService) {
         this.doctorService = doctorService;
+        this.jwtService = jwtService;
     }
 
 
-    @GetMapping("/all")
+    @GetMapping("/allView/all")
     public ResponseEntity<List<DoctorEntity>> getAllDoctorProfiles() {
         List<DoctorEntity> allDoctors = doctorService.getAllDoctorProfiles();
         return new ResponseEntity<>(allDoctors, OK);
     }
 
-    @GetMapping("/username={username}")
+    @GetMapping("/allView/username={username}")
     public ResponseEntity<DoctorEntity> getDoctorByUsername(@PathVariable("username") String username)
             throws DoctorUsernameNotFoundException {
         DoctorEntity doctor = doctorService.getDoctorByUsername(username);
         return new ResponseEntity<>(doctor, OK);
     }
 
-    @GetMapping("/firstname={firstName}_lastname={lastName}")
+    @GetMapping("/allView/firstname={firstName}")
+    public ResponseEntity<List<DoctorEntity>> getDoctorsByFirstName(@PathVariable("firstName") String firstName) {
+        List<DoctorEntity> doctors = doctorService.getDoctorsByFirstName(firstName);
+        return new ResponseEntity<>(doctors, OK);
+    }
+
+    @GetMapping("/allView/lastname={lastName}")
+    public ResponseEntity<List<DoctorEntity>> getDoctorsByLastName(@PathVariable("lastName") String lastName) {
+        List<DoctorEntity> doctors = doctorService.getDoctorsByLastName(lastName);
+        return new ResponseEntity<>(doctors, OK);
+    }
+
+    @GetMapping("/allView/firstname={firstName}_lastname={lastName}")
     public ResponseEntity<List<DoctorEntity>> getDoctorsByFirstNameAndLastName(
             @PathVariable("firstName") String firstName,
             @PathVariable("lastName") String lastName) {
@@ -46,20 +63,52 @@ public class DoctorController {
         return new ResponseEntity<>(doctors, OK);
     }
 
-    @PostMapping("/resetpassword")
-    public ResponseEntity<DoctorEntity> resetPassword(@RequestBody NewPasswordRequest request) {
-        DoctorEntity doctorEntity = doctorService.resetPassword(request.username(), request.password());
-        return new ResponseEntity<>(doctorEntity, ACCEPTED);
+    @GetMapping("/allView/specialty={specialty}")
+    public ResponseEntity<List<DoctorEntity>> getDoctorsBySpecialty(@PathVariable("specialty") String specialty) {
+        List<DoctorEntity> doctors = doctorService.getDoctorsBySpecialty(specialty);
+        return new ResponseEntity<>(doctors, OK);
     }
 
-    @DeleteMapping("/{username}")
-    public ResponseEntity<HttpResponse> deleteDoctorAccount(@PathVariable("username") String username)
+    @GetMapping("/allView/degree={degree}")
+    public ResponseEntity<List<DoctorEntity>> getDoctorByDegree(@PathVariable("degree") String degree) {
+        List<DoctorEntity> doctors = doctorService.getDoctorsByDegree(degree);
+        return new ResponseEntity<>(doctors, OK);
+    }
+
+    @GetMapping("/doctorView/profile")
+    public ResponseEntity<DoctorEntity> getMyProfile(@RequestHeader("Authorization") String authHeader)
             throws DoctorUsernameNotFoundException {
-        doctorService.deleteDoctor(username);
+
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        DoctorEntity doctor = doctorService.getDoctorByUsername(username);
+        return new ResponseEntity<>(doctor, OK);
+    }
+
+    @PostMapping("/doctorView/resetpassword")
+    public ResponseEntity<HttpResponse> resetPassword(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(value = "password") String password) {
+
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        doctorService.resetPassword(username, password);
+        return BuildResponse.build(NO_CONTENT, DOCTOR_PASSWORD_RESET_SUCCESSFULLY);
+    }
+
+    @DeleteMapping("/doctorView/deleteDoctor")
+    public ResponseEntity<HttpResponse> deleteDoctorAccount(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(value = "password") String password)
+            throws DoctorUsernameNotFoundException, PasswordMismatchException {
+
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        doctorService.deleteDoctor(username, password);
         return BuildResponse.build(NO_CONTENT, DOCTOR_DELETED_SUCCESSFULLY);
     }
 
-    @PutMapping("/{username}")
+    @PutMapping("/doctorView/updateDoctor")
     public ResponseEntity<HttpResponse> updateDoctorAccount(
             @PathVariable("username") String username,
             @RequestParam(value = "first_name", required = false) String firstName,
@@ -87,8 +136,5 @@ public class DoctorController {
                 boardCertification);
 
         return BuildResponse.build(ACCEPTED, DOCTOR_UPDATED_SUCCESSFULLY);
-    }
-
-    private record NewPasswordRequest(String username, String password) {
     }
 }

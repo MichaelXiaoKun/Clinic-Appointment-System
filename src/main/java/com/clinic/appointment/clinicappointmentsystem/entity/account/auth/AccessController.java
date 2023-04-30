@@ -1,6 +1,8 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account.auth;
 
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DateOfBirthMismatchException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.EmailMismatchException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,5 +28,11 @@ public class AccessController {
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request)
             throws DoctorUsernameFoundException {
         return new ResponseEntity<>(service.register(request), CREATED);
+    }
+
+    @PostMapping("/forgetPassword")
+    public ResponseEntity<AuthenticationResponse> resetPassword(@RequestBody PasswordResetRequest request)
+            throws EmailMismatchException, DateOfBirthMismatchException {
+        return new ResponseEntity<>(service.resetPassword(request), CREATED);
     }
 }
