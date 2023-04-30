@@ -16,7 +16,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "APPOINTMENT", schema = "CLINICADMIN")
 public class AppointmentEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "APPT_ID", nullable = false)
     private int apptId;
