@@ -47,8 +47,8 @@ public class ExceptionHandling {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<HttpResponse> expiredJwtException(ExpiredJwtException exception) {
+    @ExceptionHandler(DateOfBirthMismatchException.class)
+    public ResponseEntity<HttpResponse> expiredJwtException(DateOfBirthMismatchException exception) {
         return createHttpResponse(UNAUTHORIZED, exception.getMessage());
     }
 }

@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface DoctorRepo extends JpaRepository<DoctorEntity, String> {
     List<DoctorEntity> findDoctorEntitiesByFirstNameAndLastName(String firstName, String lastName);
+    List<DoctorEntity> findDoctorEntitiesByFirstName(String firstName);
+    List<DoctorEntity> findDoctorEntitiesByLastName(String lastName);
+    List<DoctorEntity> findDoctorEntitiesBySpecialty(String specialty);
+    List<DoctorEntity> findDoctorEntitiesByDegree(String degree);
 }

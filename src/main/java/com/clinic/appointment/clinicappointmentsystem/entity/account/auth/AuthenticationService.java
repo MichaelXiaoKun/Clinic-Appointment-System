@@ -7,7 +7,9 @@ import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientRepo;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DateOfBirthMismatchException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameFoundException;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.EmailMismatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -92,13 +94,9 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+    public AuthenticationResponse resetPassword(PasswordResetRequest request)
+            throws DateOfBirthMismatchException, EmailMismatchException {
+
         Optional<DoctorEntity> doctorUser = doctorRepo.findById(request.getUsername());
         Optional<PatientEntity> patientUser = patientRepo.findById(request.getUsername());
 
@@ -110,6 +108,43 @@ public class AuthenticationService {
         if (doctorUser.isPresent()) {
             user = doctorUser.get();
         } else {
+            user = patientUser.get();
+        }
+
+        if (!user.getDob().equals(request.getDob())) {
+            throw new DateOfBirthMismatchException("Date of Birth is not in the record with username "
+                    + request.getUsername());
+        }
+        if (!user.getEmail().equals(request.getEmail())) {
+            throw new EmailMismatchException("Email is not in the record with username " + request.getUsername());
+        }
+
+        user.setPassword(request.getPassword());
+
+        String jwtToken = jwtService.generateToken(
+                user.getAccountType()
+                        .equalsIgnoreCase("DOCTOR") ? (DoctorEntity) user : (PatientEntity) user
+        );
+
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+        Optional<DoctorEntity> doctorUser = doctorRepo.findById(request.getUsername());
+        Optional<PatientEntity> patientUser = patientRepo.findById(request.getUsername());
+
+        AccountEntity user = null;
+        if (doctorUser.isPresent()) {
+            user = doctorUser.get();
+        } else if (patientUser.isPresent()) {
             user = patientUser.get();
         }
 
