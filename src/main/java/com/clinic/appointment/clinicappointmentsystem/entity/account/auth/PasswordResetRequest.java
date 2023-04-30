@@ -5,11 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
-public class AuthenticationRequest {
+public class PasswordResetRequest {
 
-    private final String password;
     private final String username;
+    private final String password;
+    private final String email;
+    private final Date dob;
 }

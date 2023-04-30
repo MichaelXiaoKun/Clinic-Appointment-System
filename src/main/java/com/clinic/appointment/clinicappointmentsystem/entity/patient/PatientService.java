@@ -39,13 +39,28 @@ public class PatientService {
         return patient.get();
     }
 
-    public PatientEntity resetPassword(String username, String new_password) {
+    public List<PatientEntity> getPatientsByFirstName(String firstName) {
+        return patientRepo.findPatientEntitiesByFirstName(firstName);
+    }
+
+    public List<PatientEntity> getPatientsByLastName(String lastName) {
+        return patientRepo.findPatientEntitiesByLastName(lastName);
+    }
+
+    public List<PatientEntity> getPatientsByFirstNameAndLastName(String firstName, String lastName) {
+        return patientRepo.findPatientEntitiesByFirstNameAndLastName(firstName, lastName);
+    }
+
+    public List<PatientEntity> billedPatients() {
+        return patientRepo.findPatientEntitiesByBalanceGreaterThanEqual(0);
+    }
+
+    public void resetPassword(String username, String new_password) {
         PatientEntity foundPatient = patientRepo.findById(username).orElseThrow(
                 () -> new UsernameNotFoundException("Doctor with username " + username + " not found")
         );
         foundPatient.setPassword(passwordEncoder.encode(new_password));
         patientRepo.save(foundPatient);
-        return foundPatient;
     }
 
     private void validateLoginAttempt(PatientEntity patientEntity) {
