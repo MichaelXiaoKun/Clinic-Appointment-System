@@ -60,6 +60,15 @@ public class PatientController {
         return new ResponseEntity<>(patients, OK);
     }
 
+    @GetMapping("/patientView/myProfile")
+    public ResponseEntity<PatientEntity> getMyProfile(@RequestHeader("Authorization") String authHeader)
+            throws PatientUsernameNotFoundException {
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        PatientEntity myProfile = patientService.getPatientByUsername(username);
+        return new ResponseEntity<>(myProfile, OK);
+    }
+
     @PostMapping("/patientView/resetpassword")
     public ResponseEntity<HttpResponse> resetPassword(
             @RequestHeader("Authorization") String authHeader,
