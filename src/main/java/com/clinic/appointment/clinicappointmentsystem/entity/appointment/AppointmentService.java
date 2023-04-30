@@ -1,5 +1,8 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.appointment;
 
+import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
+import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,13 +12,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AppointmentService {
+public class AppointmentService{
 
+    private AppointmentHandler dailyHandler;
     private final AppointmentRepo appointmentRepo;
 
     @Autowired
-    public AppointmentService(AppointmentRepo appointmentRepo) {
+    public AppointmentService(AppointmentRepo appointmentRepo, AppointmentHandler dailyHandler) {
         this.appointmentRepo = appointmentRepo;
+        this.dailyHandler = dailyHandler;
+    }
+
+
+    public AppointmentResponse makeAppointment(AppointmentRequest request) throws AppointmentDateException {
+        // Make appointment
+        return dailyHandler.makeAppointment(request);
+    }
+
+    public AppointmentResponse cancelAppointment(AppointmentRequest request) throws AppointmentDateException {
+        return dailyHandler.cancelAppointment(request);
     }
 
     public List<AppointmentEntity> getAllAppointments() {
@@ -25,7 +40,7 @@ public class AppointmentService {
     public AppointmentEntity getAppointmentByID(int apptID) throws AppointmentIdNotFoundException {
         Optional<AppointmentEntity> appt = appointmentRepo.findById(apptID);
         if (appt.isEmpty()) {
-            throw new AppointmentIdNotFoundException("Appointment with ID: " + String.valueOf(apptID) + " is not found");
+            throw new AppointmentIdNotFoundException("Appointment with ID: " + apptID + " is not found");
         }
         return appt.get();
     }

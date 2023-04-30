@@ -2,13 +2,11 @@ package com.clinic.appointment.clinicappointmentsystem.entity.appointment;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorService;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientService;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -31,6 +29,16 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
         this.patientService = patientService;
+    }
+
+    @PostMapping("/make")
+    public ResponseEntity<AppointmentResponse> makeAppointment(@RequestBody AppointmentRequest request) throws AppointmentDateException {
+        return ResponseEntity.ok(appointmentService.makeAppointment(request));
+    }
+
+    @DeleteMapping("/cancel")
+    public ResponseEntity<AppointmentResponse> cancelAppointment(@RequestBody AppointmentRequest request) throws AppointmentDateException {
+        return ResponseEntity.ok(appointmentService.cancelAppointment(request));
     }
 
     @GetMapping("/all")
@@ -61,4 +69,6 @@ public class AppointmentController {
         List<AppointmentEntity> appts = appointmentService.getAppointmentsBtwStartTimeAndEndTime(start_time, end_time);
         return new ResponseEntity<>(appts, OK);
     }
+
+
 }
