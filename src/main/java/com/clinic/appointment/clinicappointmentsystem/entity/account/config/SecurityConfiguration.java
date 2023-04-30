@@ -5,7 +5,6 @@ import com.clinic.appointment.clinicappointmentsystem.exception.JwtAccessDeniedH
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,8 +37,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/login",
-                        "/api/register").permitAll()
-//                .requestMatchers("/api/account/doctor/allView/**").authenticated()
+                        "/api/register",
+                        "/api/forgetPassword").permitAll()
                 .requestMatchers("/api/account/patient/patientView/**").hasAuthority(Role.PATIENT.getAuthority())
                 .requestMatchers(
                         "/api/account/patient/doctorView/**",
