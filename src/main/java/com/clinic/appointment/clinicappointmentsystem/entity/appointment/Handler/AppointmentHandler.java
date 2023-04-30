@@ -300,16 +300,6 @@ public class AppointmentHandler {
 
     }
 
-    public static void main(String[] args) {
-        SegmentTree s = new SegmentTree();
-//        System.out.println(s.appointmentQuery(4, 6));
-        System.out.println(s.makeAppointment(4, 6));
-//        System.out.println(s.appointmentQuery(4, 6));
-        System.out.println(s.makeAppointment(6, 8));
-//        System.out.println(s.appointmentQuery(4, 6));
-
-    }
-
 }
 
 
