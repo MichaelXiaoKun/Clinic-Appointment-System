@@ -167,4 +167,13 @@ public class PatientService {
 
         patientRepo.save(foundPatient);
     }
+
+
+    public List<PatientEntity> findPatientsByEmail(String email) {
+        return patientRepo.findPatientEntitiesByEmail(email);
+    }
+
+    public long getTotalPatientsCount() {
+        return patientRepo.count();
+    }
 }

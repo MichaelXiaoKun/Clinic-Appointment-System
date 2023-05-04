@@ -147,4 +147,12 @@ public class DoctorService {
 
         doctorRepo.deleteById(username);
     }
+
+    public List<DoctorEntity> getDoctorsByLicenseNumber(String licenseNumber) {
+        return doctorRepo.findDoctorEntitiesByLicenseNumber(licenseNumber);
+    }
+
+    public List<DoctorEntity> getDoctorsByBoardCertification(String boardCertification) {
+        return doctorRepo.findDoctorEntitiesByBoardCertification(boardCertification);
+    }
 }

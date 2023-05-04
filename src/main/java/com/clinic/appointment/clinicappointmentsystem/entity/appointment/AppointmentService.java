@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,4 +59,23 @@ public class AppointmentService{
     public List<AppointmentEntity> getAppointmentsBtwStartTimeAndEndTime(Timestamp start_time, Timestamp end_time) {
         return appointmentRepo.findAppointmentEntitiesByStartDateAfterAndEndDateBefore(start_time, end_time);
     }
+
+    public AppointmentResponse updateAppointment(AppointmentRequest request) throws AppointmentDateException, AppointmentIdNotFoundException {
+        return dailyHandler.updateAppointment(request);
+    }
+
+
+    public List<AppointmentEntity> getAppointmentsByDate(LocalDate date) {
+        Timestamp startOfDay = Timestamp.valueOf(date.atStartOfDay());
+        Timestamp endOfDay = Timestamp.valueOf(date.plusDays(1).atStartOfDay());
+        return getAppointmentsBtwStartTimeAndEndTime(startOfDay, endOfDay);
+    }
+
+
+
+    public Long getTotalAppointments() {
+        return appointmentRepo.count();
+    }
+
+
 }
