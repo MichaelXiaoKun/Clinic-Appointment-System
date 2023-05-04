@@ -96,5 +96,4 @@ public class AppointmentController {
         return new ResponseEntity<>(appointmentService.getTotalAppointments(), OK);
     }
     // Get the total number of appointments
-
 }
