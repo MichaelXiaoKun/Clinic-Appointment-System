@@ -19,6 +19,10 @@ import java.util.List;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 
+import java.time.LocalDate;
+import java.util.stream.Collectors;
+
+
 @Service
 public class AppointmentHandler {
 
@@ -263,6 +267,68 @@ public class AppointmentHandler {
         }
 
     }
+
+
+    // updateAppointment
+    public AppointmentResponse updateAppointment(AppointmentRequest request) throws AppointmentDateException {
+        // Check if appointment exists in the database
+        if (!appointmentRepo.existsById(request.getAppointmentId())) {
+            return AppointmentResponse.builder()
+                    .id(request.getAppointmentId())
+                    .success(false)
+                    .request(request)
+                    .build();
+        }
+
+        // Cancel the existing appointment
+        AppointmentResponse cancelResponse = cancelAppointment(request);
+        if (!cancelResponse.isSuccess()) {
+            return AppointmentResponse.builder()
+                    .id(request.getAppointmentId())
+                    .success(false)
+                    .request(request)
+                    .build();
+        }
+
+        // Create a new appointment with updated details
+        AppointmentResponse makeResponse = makeAppointment(request);
+        if (!makeResponse.isSuccess()) {
+            // If the updated appointment cannot be scheduled, try to revert to the original appointment
+            makeAppointment(cancelResponse.getRequest());
+            return AppointmentResponse.builder()
+                    .id(request.getAppointmentId())
+                    .success(false)
+                    .request(request)
+                    .build();
+        }
+
+        return AppointmentResponse.builder()
+                .id(makeResponse.getId())
+                .success(true)
+                .request(request)
+                .build();
+    }
+
+
+
+
+    // Get appointments for a specific date
+    public List<AppointmentEntity> getAppointmentsForSpecificDate(LocalDate date) {
+        List<AppointmentEntity> allAppointments = appointmentRepo.findAll();
+        return allAppointments.stream()
+                .filter(appointment -> appointment.getStartDate().toLocalDateTime().toLocalDate().equals(date))
+                .collect(Collectors.toList());
+    }
+
+
+    // Get the total number of appointments
+    public long getTotalAppointments() {
+        return appointmentRepo.count();
+    }
+
+
+
+
 
 
     /*

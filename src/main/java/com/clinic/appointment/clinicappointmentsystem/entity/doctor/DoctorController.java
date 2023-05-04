@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+
 import java.sql.Date;
 import java.util.List;
 
@@ -137,4 +142,15 @@ public class DoctorController {
 
         return BuildResponse.build(ACCEPTED, DOCTOR_UPDATED_SUCCESSFULLY);
     }
+
+    @GetMapping("/doctors/licenseNumber")
+    public List<DoctorEntity> getDoctorsByLicenseNumber(@RequestParam String licenseNumber) {
+        return doctorService.getDoctorsByLicenseNumber(licenseNumber);
+    }
+
+    @GetMapping("/doctors/boardCertification")
+    public List<DoctorEntity> getDoctorsByBoardCertification(@RequestParam String boardCertification) {
+        return doctorService.getDoctorsByBoardCertification(boardCertification);
+    }
+
 }
