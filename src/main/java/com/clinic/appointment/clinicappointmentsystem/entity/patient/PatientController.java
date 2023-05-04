@@ -8,6 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// Import statements
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.sql.Date;
 import java.util.List;
 
@@ -118,5 +123,15 @@ public class PatientController {
                 emergencyFirstName, emergencyLastName, emergencyPhoneNumber);
 
         return BuildResponse.build(ACCEPTED, PATIENT_UPDATED_SUCCESSFULLY);
+    }
+
+    @GetMapping("/api/patients/email")
+    public List<PatientEntity> findPatientsByEmail(@RequestParam("email") String email) {
+        return patientService.findPatientsByEmail(email);
+    }
+
+    @GetMapping("/api/patients/count")
+    public long getTotalPatientsCount() {
+        return patientService.getTotalPatientsCount();
     }
 }

@@ -39,4 +39,25 @@ public class AccountService {
 
         return accounts;
     }
+
+    public List<AccountEntity> getAccountsByEmail(String email) {
+        List<AccountEntity> accounts = new ArrayList<>();
+        accounts.addAll(patientRepo.findPatientEntitiesByEmail(email));
+        accounts.addAll(doctorRepo.findDoctorEntitiesByEmail(email));
+        return accounts;
+    }
+
+    public List<AccountEntity> getAccountsByType(String accountType) {
+        List<AccountEntity> accounts = new ArrayList<>();
+        if (accountType.equalsIgnoreCase("doctor")) {
+            accounts.addAll(doctorRepo.findAll());
+        } else if (accountType.equalsIgnoreCase("patient")) {
+            accounts.addAll(patientRepo.findAll());
+        }
+        return accounts;
+    }
+
+    public long getTotalAccountsCount() {
+        return doctorRepo.count() + patientRepo.count();
+    }
 }

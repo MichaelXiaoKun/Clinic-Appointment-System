@@ -11,6 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.util.List;
 
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+
+
+
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -70,5 +79,22 @@ public class AppointmentController {
         return new ResponseEntity<>(appts, OK);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<AppointmentResponse> updateAppointment(@RequestBody AppointmentRequest request) throws AppointmentDateException, AppointmentIdNotFoundException {
+        return ResponseEntity.ok(appointmentService.updateAppointment(request));
+    }
+    // Update an appointment
+
+    @GetMapping("/date/{date}")
+    public ResponseEntity<List<AppointmentEntity>> getAppointmentsByDate(@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return new ResponseEntity<>(appointmentService.getAppointmentsByDate(date), OK);
+    }
+    // Get appointments for a specific date
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getTotalAppointments() {
+        return new ResponseEntity<>(appointmentService.getTotalAppointments(), OK);
+    }
+    // Get the total number of appointments
 
 }
