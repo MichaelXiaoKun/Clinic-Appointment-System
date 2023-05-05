@@ -94,7 +94,7 @@ public class PatientController {
         return BuildResponse.build(NO_CONTENT, PATIENT_DELETED_SUCCESSFULLY);
     }
 
-    @PutMapping("patientView/myProfile")
+    @PutMapping("/patientView/myProfile")
     public ResponseEntity<HttpResponse> updatePatient(
             @RequestHeader("Authorization") String authHeader,
             @RequestParam(name = "first_name", required = false) String firstName,
@@ -125,12 +125,12 @@ public class PatientController {
         return BuildResponse.build(ACCEPTED, PATIENT_UPDATED_SUCCESSFULLY);
     }
 
-    @GetMapping("/api/patients/email")
+    @GetMapping("/doctorView/email")
     public List<PatientEntity> findPatientsByEmail(@RequestParam("email") String email) {
         return patientService.findPatientsByEmail(email);
     }
 
-    @GetMapping("/api/patients/count")
+    @GetMapping("/doctorView/count")
     public long getTotalPatientsCount() {
         return patientService.getTotalPatientsCount();
     }
