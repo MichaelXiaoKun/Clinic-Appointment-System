@@ -159,14 +159,13 @@ public class DoctorController {
         return BuildResponse.build(ACCEPTED, BREAKS_ADDED_SUCCESSFULLY);
     }
 
-    @GetMapping("/doctors/licenseNumber")
+    @GetMapping("/allView/licenseNumber")
     public List<DoctorEntity> getDoctorsByLicenseNumber(@RequestParam String licenseNumber) {
         return doctorService.getDoctorsByLicenseNumber(licenseNumber);
     }
 
-    @GetMapping("/doctors/boardCertification")
+    @GetMapping("/allView/boardCertification")
     public List<DoctorEntity> getDoctorsByBoardCertification(@RequestParam String boardCertification) {
         return doctorService.getDoctorsByBoardCertification(boardCertification);
     }
-
 }
