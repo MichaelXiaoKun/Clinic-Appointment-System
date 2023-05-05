@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/appointment")
+@RequestMapping("/api/account/appointment")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
@@ -96,5 +96,4 @@ public class AppointmentController {
         return new ResponseEntity<>(appointmentService.getTotalAppointments(), OK);
     }
     // Get the total number of appointments
-
 }

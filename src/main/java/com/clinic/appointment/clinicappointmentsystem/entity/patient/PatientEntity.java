@@ -180,7 +180,7 @@ public class PatientEntity extends AccountEntity {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return super.isAccountNonLocked();
     }
 
     @Override
