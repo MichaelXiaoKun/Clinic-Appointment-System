@@ -89,7 +89,7 @@ public class DoctorEntity extends AccountEntity {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return super.isAccountNonLocked();
     }
 
     @Override

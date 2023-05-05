@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/appointment")
+@RequestMapping("/api/account/appointment")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;

@@ -2,6 +2,7 @@ package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,12 +20,19 @@ public class PatientService {
     private final PatientRepo patientRepo;
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
+    private final DoctorBreaksRepo doctorBreaksRepo;
 
     @Autowired
-    public PatientService(PatientRepo patientRepo, PasswordEncoder passwordEncoder, LoginAttemptService loginAttemptService) {
+    public PatientService(
+            PatientRepo patientRepo,
+            PasswordEncoder passwordEncoder,
+            LoginAttemptService loginAttemptService,
+            DoctorBreaksRepo doctorBreaksRepo) {
+
         this.patientRepo = patientRepo;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
+        this.doctorBreaksRepo = doctorBreaksRepo;
     }
 
     public List<PatientEntity> getAllPatientProfiles() {
@@ -66,11 +74,13 @@ public class PatientService {
     private void validateLoginAttempt(PatientEntity patientEntity) {
 
         if (patientEntity.isAccountNonLocked()) {
-////            if (loginAttemptService.attemptsGreaterThanAllowed(patientEntity.getUsername())) {
-////                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO TRUE
-////            } else {
-////                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO FALSE
-////            }
+            if (loginAttemptService.attemptsGreaterThanAllowed(patientEntity.getUsername())) {
+                // MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO TRUE
+                patientEntity.lockAccount();
+            } else {
+                // MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO FALSE
+                patientEntity.unlockAccount();
+            }
         } else {
             loginAttemptService.deleteUserFromLoginAttemptCache(patientEntity.getUsername());
         }
@@ -83,19 +93,6 @@ public class PatientService {
         }
 
         patientRepo.deleteById(username);
-    }
-
-    private void validateLoginAttempt(DoctorEntity doctorEntity) {
-
-        if (doctorEntity.isAccountNonLocked()) {
-////            if (loginAttemptService.attemptsGreaterThanAllowed(doctorEntity.getUsername())) {
-////                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO TRUE
-////            } else {
-////                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO FALSE
-////            }
-        } else {
-            loginAttemptService.deleteUserFromLoginAttemptCache(doctorEntity.getUsername());
-        }
     }
 
     @Transactional

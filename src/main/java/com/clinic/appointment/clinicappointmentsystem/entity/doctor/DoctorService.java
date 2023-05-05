@@ -1,6 +1,9 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorBreaksOutOfRangeException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PasswordMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Service
 public class DoctorService {
@@ -19,12 +22,19 @@ public class DoctorService {
     private final DoctorRepo doctorRepo;
     private final LoginAttemptService loginAttemptService;
     private final PasswordEncoder passwordEncoder;
+    private final DoctorBreaksRepo doctorBreaksRepo;
 
     @Autowired
-    public DoctorService(DoctorRepo doctorRepo, LoginAttemptService loginAttemptService, PasswordEncoder passwordEncoder) {
+    public DoctorService(
+            DoctorRepo doctorRepo,
+            LoginAttemptService loginAttemptService,
+            PasswordEncoder passwordEncoder,
+            DoctorBreaksRepo doctorBreaksRepo) {
+
         this.doctorRepo = doctorRepo;
         this.loginAttemptService = loginAttemptService;
         this.passwordEncoder = passwordEncoder;
+        this.doctorBreaksRepo = doctorBreaksRepo;
     }
 
     public List<DoctorEntity> getAllDoctorProfiles() {
@@ -71,11 +81,13 @@ public class DoctorService {
     private void validateLoginAttempt(DoctorEntity doctorEntity) {
 
         if (doctorEntity.isAccountNonLocked()) {
-////            if (loginAttemptService.attemptsGreaterThanAllowed(doctorEntity.getUsername())) {
-//                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO TRUE
-////            } else {
-//                //TODO: MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO FALSE
-////            }
+            if (loginAttemptService.attemptsGreaterThanAllowed(doctorEntity.getUsername())) {
+//                MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO TRUE
+                doctorEntity.lockAccount();
+            } else {
+//                MODIFY DB TO ALLOW FOR LOCK STATUS AND SET LOCK TO FALSE
+                doctorEntity.unlockAccount();
+            }
         } else {
             loginAttemptService.deleteUserFromLoginAttemptCache(doctorEntity.getUsername());
         }
@@ -137,7 +149,7 @@ public class DoctorService {
     public void deleteDoctor(String username, String password)
             throws DoctorUsernameNotFoundException, PasswordMismatchException {
         DoctorEntity doctor = doctorRepo.findById(username).orElseThrow(
-                ()-> new DoctorUsernameNotFoundException("Doctor with username: " + username + " not found")
+                () -> new DoctorUsernameNotFoundException("Doctor with username: " + username + " not found")
         );
 
         String encoded_user_pwd = passwordEncoder.encode(password);
@@ -154,5 +166,52 @@ public class DoctorService {
 
     public List<DoctorEntity> getDoctorsByBoardCertification(String boardCertification) {
         return doctorRepo.findDoctorEntitiesByBoardCertification(boardCertification);
+    }
+
+    public void addBreaks(String username, Timestamp startTime, Timestamp endTime)
+            throws DoctorBreaksOutOfRangeException {
+
+        Calendar start = Calendar.getInstance();
+        start.setTime(startTime);
+        Calendar end = Calendar.getInstance();
+        end.setTime(endTime);
+
+        int startHour = start.get(Calendar.HOUR_OF_DAY);
+        int endHour = end.get(Calendar.HOUR_OF_DAY);
+
+        if (startHour < 10 || startHour > 17) {
+            throw new DoctorBreaksOutOfRangeException("Start time should be set to any hour between 10 AM and 5 PM");
+        }
+        if (endHour < 11 || endHour > 18) {
+            throw new DoctorBreaksOutOfRangeException("Start time should be set to any hour between 11 AM and 6 PM");
+        }
+
+        List<DoctorBreaksEntity> breaks = doctorBreaksRepo.findDoctorBreaksEntitiesByDoctorUsername(username);
+
+        DoctorBreaksEntity doctorBreaks = DoctorBreaksEntity.builder()
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+
+        breaks.add(doctorBreaks);
+
+        breaks.sort(Comparator.comparing(DoctorBreaksEntity::getStartTime));
+
+        LinkedList<DoctorBreaksEntity> mergedBreaks = new LinkedList<>();
+        mergedBreaks.addLast(breaks.get(0));
+
+        for (int id = 1; id < breaks.size(); id++) {
+            DoctorBreaksEntity curr = breaks.get(id);
+            DoctorBreaksEntity prev = mergedBreaks.getLast();
+
+            if (prev.getEndTime().before(curr.getStartTime())) {
+                mergedBreaks.addLast(curr);
+            } else {
+                prev.setEndTime(prev.getEndTime().after(curr.getEndTime()) ? prev.getEndTime() : curr.getEndTime());
+                doctorBreaksRepo.delete(curr);
+            }
+        }
+
+        doctorBreaksRepo.saveAll(mergedBreaks);
     }
 }
