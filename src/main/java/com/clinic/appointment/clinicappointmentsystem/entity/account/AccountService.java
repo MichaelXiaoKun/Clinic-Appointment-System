@@ -1,6 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorRepo;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,13 @@ public class AccountService {
 
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
+    private final DoctorBreaksRepo doctorBreaksRepo;
 
     @Autowired
-    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo) {
+    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo, DoctorBreaksRepo doctorBreaksRepo) {
         this.doctorRepo = doctorRepo;
         this.patientRepo = patientRepo;
+        this.doctorBreaksRepo = doctorBreaksRepo;
     }
 
     public List<AccountEntity> getAccountsByFirstNameAndLastName(String firstName, String lastName) {

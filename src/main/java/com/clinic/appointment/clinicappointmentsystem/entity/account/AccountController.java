@@ -56,4 +56,5 @@ public class AccountController {
         long count = accountService.getTotalAccountsCount();
         return new ResponseEntity<>(count, OK);
     }
+
 }

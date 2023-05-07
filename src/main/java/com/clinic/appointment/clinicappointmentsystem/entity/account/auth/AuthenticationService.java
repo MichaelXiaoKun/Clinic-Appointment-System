@@ -55,6 +55,7 @@ public class AuthenticationService {
                     .middleName(request.getMiddleName())
                     .accountType("DOCTOR")
                     .email(request.getEmail())
+                    .isLocked(0)
                     .build();
 
             doctorRepo.save((DoctorEntity) user);

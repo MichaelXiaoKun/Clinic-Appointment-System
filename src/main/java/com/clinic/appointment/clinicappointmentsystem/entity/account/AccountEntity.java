@@ -54,6 +54,10 @@ public abstract class AccountEntity implements UserDetails {
     @Column(name = "EMAIL", nullable = false)
     private String email;
 
+    @Basic
+    @Column(name = "IS_LOCKED", nullable = false)
+    private int isLocked;
+
     public String getUsername() {
         return username;
     }
@@ -124,6 +128,18 @@ public abstract class AccountEntity implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void lockAccount() {
+        this.isLocked = 1;
+    }
+
+    public void unlockAccount() {
+        this.isLocked = 0;
+    }
+
+    public boolean isAccountNonLocked() {
+        return this.isLocked == 0;
     }
 
     @Override
