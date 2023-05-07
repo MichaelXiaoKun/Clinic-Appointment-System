@@ -2,6 +2,7 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorBreaksOutOfRangeException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PasswordMismatchException;
@@ -9,11 +10,6 @@ import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -91,6 +87,28 @@ public class DoctorController {
         String username = this.jwtService.extractUsername(jwtToken);
         DoctorEntity doctor = doctorService.getDoctorByUsername(username);
         return new ResponseEntity<>(doctor, OK);
+    }
+
+    @GetMapping("/doctorView/myBreaks")
+    public ResponseEntity<List<DoctorBreaksEntity>> getBreaks(@RequestHeader("Authorization") String authHeader) {
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        List<DoctorBreaksEntity> breaksList = doctorService.getBreaksByUsername(username);
+        return new ResponseEntity<>(breaksList, OK);
+    }
+
+    @GetMapping("/doctorView/findBreaks")
+    public ResponseEntity<List<DoctorBreaksEntity>> getBreaksByStartTimeAndEndTime(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(value = "startTime") Timestamp startTime,
+            @RequestParam(value = "endTime") Timestamp endTime) {
+
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        List<DoctorBreaksEntity> breaksList = doctorService.getBreaksByUsernameAndStartTimeAndEndTime(
+                username, startTime, endTime);
+
+        return new ResponseEntity<>(breaksList, OK);
     }
 
     @PostMapping("/doctorView/resetpassword")
