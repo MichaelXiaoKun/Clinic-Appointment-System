@@ -2,6 +2,7 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorBreaksOutOfRangeException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PasswordMismatchException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
@@ -9,7 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -20,6 +27,7 @@ public class DoctorController {
     public static final String DOCTOR_DELETED_SUCCESSFULLY = "Doctor deleted successfully";
     public static final String DOCTOR_UPDATED_SUCCESSFULLY = "Doctor updated successfully";
     public static final String DOCTOR_PASSWORD_RESET_SUCCESSFULLY = "Doctor password reset successfully";
+    public static final String BREAKS_ADDED_SUCCESSFULLY = "Breaks added successfully";
     private final DoctorService doctorService;
     private final JwtService jwtService;
 
@@ -136,5 +144,28 @@ public class DoctorController {
                 boardCertification);
 
         return BuildResponse.build(ACCEPTED, DOCTOR_UPDATED_SUCCESSFULLY);
+    }
+
+    @PostMapping("/doctorView/addBreaks")
+    public ResponseEntity<HttpResponse> addBreaks(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(value = "start") Timestamp startTime,
+            @RequestParam(value = "end") Timestamp endTime) throws DoctorBreaksOutOfRangeException {
+
+        String jwtToken = authHeader.substring(7);
+        String username = jwtService.extractUsername(jwtToken);
+        doctorService.addBreaks(username, startTime, endTime);
+
+        return BuildResponse.build(ACCEPTED, BREAKS_ADDED_SUCCESSFULLY);
+    }
+
+    @GetMapping("/allView/licenseNumber")
+    public List<DoctorEntity> getDoctorsByLicenseNumber(@RequestParam String licenseNumber) {
+        return doctorService.getDoctorsByLicenseNumber(licenseNumber);
+    }
+
+    @GetMapping("/allView/boardCertification")
+    public List<DoctorEntity> getDoctorsByBoardCertification(@RequestParam String boardCertification) {
+        return doctorService.getDoctorsByBoardCertification(boardCertification);
     }
 }

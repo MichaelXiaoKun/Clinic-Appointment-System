@@ -10,4 +10,11 @@ public interface DoctorRepo extends JpaRepository<DoctorEntity, String> {
     List<DoctorEntity> findDoctorEntitiesByLastName(String lastName);
     List<DoctorEntity> findDoctorEntitiesBySpecialty(String specialty);
     List<DoctorEntity> findDoctorEntitiesByDegree(String degree);
+    List<DoctorEntity> findDoctorEntitiesByLicenseNumber(String licenseNumber);
+    List<DoctorEntity> findDoctorEntitiesByBoardCertification(String boardCertification);
+
+    List<DoctorEntity> findDoctorEntitiesByEmail(String email);
+
+
+
 }

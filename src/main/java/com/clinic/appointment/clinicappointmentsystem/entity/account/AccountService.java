@@ -1,6 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.account;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorRepo;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,13 @@ public class AccountService {
 
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
+    private final DoctorBreaksRepo doctorBreaksRepo;
 
     @Autowired
-    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo) {
+    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo, DoctorBreaksRepo doctorBreaksRepo) {
         this.doctorRepo = doctorRepo;
         this.patientRepo = patientRepo;
+        this.doctorBreaksRepo = doctorBreaksRepo;
     }
 
     public List<AccountEntity> getAccountsByFirstNameAndLastName(String firstName, String lastName) {
@@ -38,5 +41,26 @@ public class AccountService {
         accounts.addAll(patientRepo.findAll());
 
         return accounts;
+    }
+
+    public List<AccountEntity> getAccountsByEmail(String email) {
+        List<AccountEntity> accounts = new ArrayList<>();
+        accounts.addAll(patientRepo.findPatientEntitiesByEmail(email));
+        accounts.addAll(doctorRepo.findDoctorEntitiesByEmail(email));
+        return accounts;
+    }
+
+    public List<AccountEntity> getAccountsByType(String accountType) {
+        List<AccountEntity> accounts = new ArrayList<>();
+        if (accountType.equalsIgnoreCase("doctor")) {
+            accounts.addAll(doctorRepo.findAll());
+        } else if (accountType.equalsIgnoreCase("patient")) {
+            accounts.addAll(patientRepo.findAll());
+        }
+        return accounts;
+    }
+
+    public long getTotalAccountsCount() {
+        return doctorRepo.count() + patientRepo.count();
     }
 }

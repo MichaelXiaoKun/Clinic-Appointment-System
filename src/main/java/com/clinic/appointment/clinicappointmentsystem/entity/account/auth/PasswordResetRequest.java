@@ -3,7 +3,6 @@ package com.clinic.appointment.clinicappointmentsystem.entity.account.auth;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 
