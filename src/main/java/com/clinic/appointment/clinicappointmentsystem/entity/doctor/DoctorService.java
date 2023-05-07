@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -168,6 +169,19 @@ public class DoctorService {
         return doctorRepo.findDoctorEntitiesByBoardCertification(boardCertification);
     }
 
+    public List<DoctorBreaksEntity> getBreaksByUsername(String username) {
+        return doctorBreaksRepo.findDoctorBreaksEntitiesByDoctorUsername(username);
+    }
+
+    public List<DoctorBreaksEntity> getBreaksByUsernameAndStartTimeAndEndTime(
+            String username,
+            Timestamp startTime,
+            Timestamp endTime) {
+
+        return doctorBreaksRepo.findDoctorBreaksEntitiesByDoctorUsernameAndStartTimeAfterAndEndTimeBefore(
+                        username, startTime, endTime);
+    }
+
     public void addBreaks(String username, Timestamp startTime, Timestamp endTime)
             throws DoctorBreaksOutOfRangeException {
 
@@ -186,7 +200,8 @@ public class DoctorService {
             throw new DoctorBreaksOutOfRangeException("Start time should be set to any hour between 11 AM and 6 PM");
         }
 
-        List<DoctorBreaksEntity> breaks = doctorBreaksRepo.findDoctorBreaksEntitiesByDoctorUsername(username);
+        List<DoctorBreaksEntity> breaks = doctorBreaksRepo
+                .findDoctorBreaksEntitiesByDoctorUsernameAndStartTimeBefore(username, endTime);
 
         DoctorBreaksEntity doctorBreaks = DoctorBreaksEntity.builder()
                 .startTime(startTime)

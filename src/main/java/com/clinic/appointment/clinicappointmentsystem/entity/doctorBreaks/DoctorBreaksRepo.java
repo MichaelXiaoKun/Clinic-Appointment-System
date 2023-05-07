@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface DoctorBreaksRepo extends JpaRepository<DoctorBreaksEntity, Integer> {
     List<DoctorBreaksEntity> findDoctorBreaksEntitiesByDoctorUsername(String username);
-    List<DoctorBreaksEntity> findDoctorBreaksEntitiesByStartTimeAfterAndEndTimeBefore(Timestamp startTime, Timestamp endTime);
+    List<DoctorBreaksEntity> findDoctorBreaksEntitiesByDoctorUsernameAndStartTimeBefore(String username, Timestamp time);
+    List<DoctorBreaksEntity> findDoctorBreaksEntitiesByDoctorUsernameAndStartTimeAfterAndEndTimeBefore(String username, Timestamp startTime, Timestamp endTime);
 }
