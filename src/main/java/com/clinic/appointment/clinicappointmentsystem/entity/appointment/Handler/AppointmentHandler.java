@@ -5,6 +5,8 @@ import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Appoint
 import com.clinic.appointment.clinicappointmentsystem.entity.appointment.AppointmentRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.appointment.AppointmentRequest;
 import com.clinic.appointment.clinicappointmentsystem.entity.appointment.AppointmentResponse;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
+import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,10 @@ import java.util.stream.Collectors;
 public class AppointmentHandler {
 
     private final AppointmentRepo appointmentRepo;
+    private final DoctorBreaksRepo doctorBreaksRepo;
 
     private static int APPT_ID = 0;
+    private static int BREAK_ID = 0;
     private final int interval = 15;
     private final int openAppointmentDay = 7;
     private  final int workStartHour = 8;
@@ -36,9 +40,17 @@ public class AppointmentHandler {
     private int day;
     private Schedule[] schedule;
 
-    public AppointmentHandler(AppointmentRepo appointmentRepo) throws AppointmentDateException{
+    private static final String NOT_SAME_DAY = "Appointment start and end days are not in the same day";
+    private static final String INVALID_SLOTS = "Invalid appointment time slots";
+    private static final String NOT_WORKING_HOUR = "Invalid appointment time. Not in working hours";
+    private static final String END_BEFORE_START = "Appointment end time is before or equal to appointment start time";
+    private static final String TIME_EXPIRED = "Invalid appointment time. Time expired";
+    private static final String TIME_EXPIRED_WEEK = "Invalid appointment time. Can't make appointment for a week later";
+
+    public AppointmentHandler(AppointmentRepo appointmentRepo, DoctorBreaksRepo doctorBreaksRepo){
 
         this.appointmentRepo = appointmentRepo;
+        this.doctorBreaksRepo = doctorBreaksRepo;
         schedule = new Schedule[openAppointmentDay];
         for (int i = 0; i < openAppointmentDay; ++i) {
             schedule[i] = new Schedule();
@@ -56,16 +68,16 @@ public class AppointmentHandler {
     private void Initialization(){
 
         List<AppointmentEntity> entityList = appointmentRepo.findAll();
+        List<DoctorBreaksEntity> doctorBreaks = doctorBreaksRepo.findAll();
 
         for (AppointmentEntity entity : entityList) {
             APPT_ID = max(APPT_ID, entity.getApptId());
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             ProcessedTime time = new ProcessedTime(entity.getStartDate(), entity.getEndDate());
 
             try {
                 commonValidityCheck(time);
 
-                boolean success = scheduleAppointment(entity);
+                boolean success = scheduleAppointment(entity.getDoctorUsername(), entity.getStartDate(), entity.getEndDate());
                 if (!success) {
                     appointmentRepo.deleteById(entity.getApptId());
                 }
@@ -77,8 +89,35 @@ public class AppointmentHandler {
                 // TODO
             }
         }
-        APPT_ID++;
 
+        for (DoctorBreaksEntity entity : doctorBreaks) {
+            BREAK_ID = max(BREAK_ID, entity.getBreakId());
+            ProcessedTime time = new ProcessedTime(entity.getStartTime(), entity.getEndTime());
+
+            try {
+                commonValidityCheck(time);
+
+                boolean success = scheduleAppointment(entity.getDoctorUsername(), entity.getStartTime(), entity.getEndTime());
+                if (!success) {
+                    doctorBreaksRepo.deleteById((int) entity.getBreakId());
+                }
+            }
+            catch (AppointmentDateException e) {
+                System.out.println("Purge invalid appointment: " + entity);
+                if(e.getMessage() == TIME_EXPIRED && time.getCurrent().before(entity.getEndTime())) {
+                    int newMinute = (time.getCurrentMinute() % 15 + 1) * 15 % 60;
+                    int newHour = time.getCurrentHour() + newMinute == 0 ? 1:0;
+                    // TODO: 5/7/23
+                    doctorBreaksRepo.deleteById((int) entity.getBreakId());
+                }
+            }
+        }
+        APPT_ID++;
+        BREAK_ID++;
+    }
+
+    public static int getBreakId() {
+        return BREAK_ID;
     }
 
     /*
@@ -99,7 +138,7 @@ public class AppointmentHandler {
                 .endDate(endTime)
                 .build();
 
-        boolean success = scheduleAppointment(entity);
+        boolean success = scheduleAppointment(entity.getDoctorUsername(), entity.getStartDate(), entity.getEndDate());
 
         if (success) { // if success, save the entity to the database
             APPT_ID++; // only increase by one if successful
@@ -160,21 +199,66 @@ public class AppointmentHandler {
     }
 
     /*
+    * Make a pseudo appointment
+    * The appointment will not be stored in the database,
+    * but will take its place in the schedule cache
+    * */
+
+    public boolean makePseudoAppointment(String doctorName, Timestamp startTime, Timestamp endTime) throws AppointmentDateException{
+        ProcessedTime time = new ProcessedTime(startTime, endTime);
+        commonValidityCheck(time);
+
+        // get all conflicted appointments. (start time before the break's end time and end time after the break's start time)
+        List<AppointmentEntity> conflicts =
+                appointmentRepo.findAppointmentEntitiesByDoctorUsernameAndEndDateAfterAndStartDateBefore(doctorName, startTime, endTime);
+
+        // delete all conflicted appointments in the database and frees the cache
+        for (AppointmentEntity entity : conflicts) {
+            // Pseudo request
+            cancelAppointment(AppointmentRequest.builder()
+                    .doctorName(doctorName)
+                    .appointmentId(entity.getApptId())
+                    .startTime(entity.getStartDate().toLocalDateTime())
+                    .endTime(entity.getEndDate().toLocalDateTime())
+                    .build());
+        }
+        if(scheduleAppointment(doctorName, startTime, endTime)) {
+            BREAK_ID++;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean cancelPseudoAppointment(String doctorName, Timestamp startTime, Timestamp endTime) throws AppointmentDateException{
+        ProcessedTime time = new ProcessedTime(startTime, endTime);
+        commonValidityCheck(time);
+
+        boolean success = schedule[time.getStartTime().getDayOfWeek().getValue() - 1].cancelAppointment(doctorName, time.getStartIdx(), time.getEndIdx());
+
+        if (success) {
+            System.out.printf("Cancel pseudo appointment successful: Doctor %s Appointment made from %s to %s%n",
+                    doctorName, time.getStartTime().toString(), time.getEndTime().toString());
+        }else {
+            System.out.printf("Cancel pseudo appointment unsuccessful: Doctor %s Appointment made from %s to %s%n",
+                    doctorName, time.getStartTime().toString(), time.getEndTime().toString());
+        }
+        return success;
+    }
+
+    /*
     * Make a reservation attempt
     * The method first checks the validity of the appointment entity
     * If valid, it would attempt to make a reservation
     * Return true if succeed, false otherwise
     * */
 
-    private boolean scheduleAppointment(AppointmentEntity entity) throws AppointmentDateException{
+    private boolean scheduleAppointment(String doctorName, Timestamp startTIme, Timestamp endTime) throws AppointmentDateException{
 
         // get key info
-        String doctorName = entity.getDoctorUsername();
-        ProcessedTime time = new ProcessedTime(entity.getStartDate(), entity.getEndDate());
+        ProcessedTime time = new ProcessedTime(startTIme, endTime);
 
         commonValidityCheck(time);
-        // If doctor is on-duty
-        // TODO
+
         // Try to make appointment
         boolean success = schedule[time.getStartTime().getDayOfWeek().getValue() - 1].makeAppointment(doctorName, time.getStartIdx(), time.getEndIdx());
         if (success) {
@@ -193,25 +277,25 @@ public class AppointmentHandler {
     private void commonValidityCheck(ProcessedTime time) throws AppointmentDateException{
         // Validity check
         if (time.getStartDay() != time.getEndDay()) {
-            throw new AppointmentDateException("Appointment start and end days are not in the same day");
+            throw new AppointmentDateException(NOT_SAME_DAY);
         }
         if (time.getStartMinute() % interval != 0 || time.getEndMinute() % interval != 0) {
-            throw new AppointmentDateException("Invalid appointment time slots");
+            throw new AppointmentDateException(INVALID_SLOTS);
         }
         if (time.getStartHour() < workStartHour || time.getStartHour() > workEndHour ||
                 time.getEndHour() < workStartHour || time.getEndHour() > workEndHour) {
-            throw new AppointmentDateException("Invalid appointment time. Not in working hours");
+            throw new AppointmentDateException(NOT_WORKING_HOUR);
         }
         if (time.getEnd().before(time.getStart()) || time.getEnd().equals(time.getStart())) {
-            throw new AppointmentDateException("Appointment end time is before or equal to appointment start time");
+            throw new AppointmentDateException(END_BEFORE_START);
         }
         if (time.getStart().before(time.getCurrent())) {
-            throw new AppointmentDateException("Invalid appointment time. Time expired");
+            throw new AppointmentDateException(TIME_EXPIRED);
         }
         long differDays = abs(ChronoUnit.DAYS.between(time.getCurrentTime(), time.getStartTime()));
         if (differDays >= 6) {
             if (differDays == 6 && (time.startHour < time.currentHour || time.startHour == time.currentHour && time.startMinute <= time.currentMinute)) {
-                throw new AppointmentDateException("Invalid appointment time. Can't make appointment for a week later");
+                throw new AppointmentDateException(TIME_EXPIRED_WEEK);
             }
         }
     }

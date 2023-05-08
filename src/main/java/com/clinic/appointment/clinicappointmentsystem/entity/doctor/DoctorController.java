@@ -2,17 +2,21 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
+import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorBreaksOutOfRangeException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PasswordMismatchException;
 import com.clinic.appointment.clinicappointmentsystem.utility.BuildResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -28,7 +32,8 @@ public class DoctorController {
     private final JwtService jwtService;
 
     @Autowired
-    public DoctorController(DoctorService doctorService, JwtService jwtService) {
+    public DoctorController(DoctorService doctorService,
+                            JwtService jwtService) {
         this.doctorService = doctorService;
         this.jwtService = jwtService;
     }
@@ -167,12 +172,27 @@ public class DoctorController {
     @PostMapping("/doctorView/addBreaks")
     public ResponseEntity<HttpResponse> addBreaks(
             @RequestHeader("Authorization") String authHeader,
-            @RequestParam(value = "start") Timestamp startTime,
-            @RequestParam(value = "end") Timestamp endTime) throws DoctorBreaksOutOfRangeException {
+            @RequestParam(value = "start") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+            @RequestParam(value = "end") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime endTime)
+            throws DoctorBreaksOutOfRangeException, AppointmentDateException {
 
         String jwtToken = authHeader.substring(7);
         String username = jwtService.extractUsername(jwtToken);
-        doctorService.addBreaks(username, startTime, endTime);
+        doctorService.addBreaks(username, Timestamp.valueOf(startTime), Timestamp.valueOf(endTime));
+
+        return BuildResponse.build(ACCEPTED, BREAKS_ADDED_SUCCESSFULLY);
+    }
+
+    @PostMapping("/doctorView/cancelBreaks")
+    public ResponseEntity<HttpResponse> cancelBreaks(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(value = "start") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+            @RequestParam(value = "end") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime endTime)
+            throws DoctorBreaksOutOfRangeException, AppointmentDateException {
+
+        String jwtToken = authHeader.substring(7);
+        String username = jwtService.extractUsername(jwtToken);
+        doctorService.cancelBreaks(username, Timestamp.valueOf(startTime), Timestamp.valueOf(endTime));
 
         return BuildResponse.build(ACCEPTED, BREAKS_ADDED_SUCCESSFULLY);
     }

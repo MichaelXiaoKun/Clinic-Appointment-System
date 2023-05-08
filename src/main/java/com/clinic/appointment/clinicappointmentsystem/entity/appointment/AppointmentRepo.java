@@ -11,4 +11,6 @@ public interface AppointmentRepo extends JpaRepository<AppointmentEntity, Intege
     List<AppointmentEntity> findAppointmentEntitiesByPatientUsername(String patientUsername);
 
     List<AppointmentEntity> findAppointmentEntitiesByDoctorUsername(String doctorUsername);
+
+    List<AppointmentEntity> findAppointmentEntitiesByDoctorUsernameAndEndDateAfterAndStartDateBefore(String doctorName, Timestamp startDate, Timestamp endDate);
 }
