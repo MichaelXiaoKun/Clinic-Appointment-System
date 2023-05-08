@@ -12,7 +12,7 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "DOCTOR_BREAKS", schema = "CLINICADMIN", catalog = "")
+@Table(name = "DOCTOR_BREAKS", schema = "CLINICADMIN")
 public class DoctorBreaksEntity {
     @Basic
     @Column(name = "START_TIME")
@@ -24,7 +24,6 @@ public class DoctorBreaksEntity {
     @Column(name = "DOCTOR_USERNAME")
     private String doctorUsername;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "BREAK_ID")
     private short breakId;

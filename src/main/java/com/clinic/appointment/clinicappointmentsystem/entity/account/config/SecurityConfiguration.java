@@ -39,7 +39,8 @@ public class SecurityConfiguration {
                         "/api/login",
                         "/api/register",
                         "/api/forgetPassword").permitAll()
-                .requestMatchers("/api/account/patient/patientView/**").hasAuthority(Role.PATIENT.getAuthority())
+                .requestMatchers("/api/account/patient/patientView/**",
+                        "/api/account/appointment/patient/patientView/**").hasAuthority(Role.PATIENT.getAuthority())
                 .requestMatchers(
                         "/api/account/patient/doctorView/**",
                         "/api/account/doctor/doctorView/**").hasAuthority(Role.DOCTOR.getAuthority())

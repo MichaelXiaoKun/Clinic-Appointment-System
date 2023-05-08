@@ -1,5 +1,6 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.appointment;
 
+import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorService;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientService;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
@@ -29,24 +30,33 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final JwtService jwtService;
 
     @Autowired
     public AppointmentController(AppointmentService appointmentService,
                                  DoctorService doctorService,
-                                 PatientService patientService) {
+                                 PatientService patientService,
+                                 JwtService jwtService) {
 
         this.appointmentService = appointmentService;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.jwtService = jwtService;
     }
 
-    @PostMapping("/make")
-    public ResponseEntity<AppointmentResponse> makeAppointment(@RequestBody AppointmentRequest request) throws AppointmentDateException {
+    @PostMapping("/patient/patientView/make")
+    public ResponseEntity<AppointmentResponse> makeAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        request.setPatientName(username);
         return ResponseEntity.ok(appointmentService.makeAppointment(request));
     }
 
-    @DeleteMapping("/cancel")
-    public ResponseEntity<AppointmentResponse> cancelAppointment(@RequestBody AppointmentRequest request) throws AppointmentDateException {
+    @DeleteMapping("/patient/patientView/cancel")
+    public ResponseEntity<AppointmentResponse> cancelAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        request.setPatientName(username);
         return ResponseEntity.ok(appointmentService.cancelAppointment(request));
     }
 
