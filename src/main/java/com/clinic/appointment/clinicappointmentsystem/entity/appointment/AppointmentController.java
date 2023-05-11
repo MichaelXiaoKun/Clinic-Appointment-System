@@ -55,7 +55,7 @@ public class AppointmentController {
       }
      */
     @PostMapping("/patient/patientView/make")
-    public ResponseEntity<AppointmentResponse> makeAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
+    public synchronized ResponseEntity<AppointmentResponse> makeAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
         request.setPatientName(username);
@@ -63,7 +63,7 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/patient/patientView/cancel")
-    public ResponseEntity<AppointmentResponse> cancelAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
+    public synchronized ResponseEntity<AppointmentResponse> cancelAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
         request.setPatientName(username);

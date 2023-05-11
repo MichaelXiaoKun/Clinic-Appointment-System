@@ -37,7 +37,6 @@ public class AppointmentHandler {
     private final int openAppointmentDay = 7;
     private  final int workStartHour = 8;
     private  final int workEndHour = 20;
-    private int day;
     private Schedule[] schedule;
 
     private static final String NOT_SAME_DAY = "Appointment start and end days are not in the same day";
@@ -104,7 +103,7 @@ public class AppointmentHandler {
             }
             catch (AppointmentDateException e) {
                 System.out.println("Purge invalid appointment: " + entity);
-                if(e.getMessage() == TIME_EXPIRED && time.getCurrent().before(entity.getEndTime())) {
+                if(e.getMessage() == TIME_EXPIRED) {
                     int newMinute = (time.getCurrentMinute() % 15 + 1) * 15 % 60;
                     int newHour = time.getCurrentHour() + newMinute == 0 ? 1:0;
                     // TODO: 5/7/23

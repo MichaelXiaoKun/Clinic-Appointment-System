@@ -9,6 +9,7 @@ import java.util.List;
 public interface DoctorBreaksRepo extends JpaRepository<DoctorBreaksEntity, Integer> {
     boolean existsDoctorBreaksEntitiesByDoctorUsernameAndStartTimeAndEndTime(String doctorName, Timestamp startTime, Timestamp endTime);
     void deleteDoctorBreaksEntitiesByDoctorUsernameAndStartTimeAndEndTime(String doctorName, Timestamp startTime, Timestamp endTime);
+    void deleteDoctorBreaksEntitiesByDoctorUsername(String username);
 
     DoctorBreaksEntity findDoctorBreaksEntityByDoctorUsernameAndStartTimeAndEndTime(String username, Timestamp startTime, Timestamp endTime);
 
