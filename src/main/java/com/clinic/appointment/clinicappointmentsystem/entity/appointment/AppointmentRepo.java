@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface AppointmentRepo extends JpaRepository<AppointmentEntity, Integer> {
+    void deleteAppointmentEntitiesByDoctorUsername(String username);
+    void deleteAppointmentEntitiesByPatientUsername(String username);
     List<AppointmentEntity> findAppointmentEntitiesByStartDateAfterAndEndDateBefore(Timestamp startDate, Timestamp endDate);
 
     List<AppointmentEntity> findAppointmentEntitiesByPatientUsernameAndStartDateAfterAndEndDateBefore(String username, Timestamp startDate, Timestamp endDate);
