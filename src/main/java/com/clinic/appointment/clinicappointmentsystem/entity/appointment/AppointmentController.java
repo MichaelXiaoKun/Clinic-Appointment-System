@@ -1,25 +1,19 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.appointment;
 
+import com.clinic.appointment.clinicappointmentsystem.entity.account.AccountService;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorService;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientService;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.util.List;
-
 import java.time.LocalDate;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-
-
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -28,17 +22,19 @@ import static org.springframework.http.HttpStatus.OK;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final AccountService accountService;
     private final DoctorService doctorService;
     private final PatientService patientService;
     private final JwtService jwtService;
 
     @Autowired
     public AppointmentController(AppointmentService appointmentService,
-                                 DoctorService doctorService,
+                                 AccountService accountService, DoctorService doctorService,
                                  PatientService patientService,
                                  JwtService jwtService) {
 
         this.appointmentService = appointmentService;
+        this.accountService = accountService;
         this.doctorService = doctorService;
         this.patientService = patientService;
         this.jwtService = jwtService;
@@ -73,12 +69,23 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.cancelAppointment(request));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<AppointmentEntity>> getAllAppointments() {
-        return new ResponseEntity<>(appointmentService.getAllAppointments(), OK);
+    @GetMapping("/allView/myAppointments")
+    public ResponseEntity<List<AppointmentEntity>> getAllAppointments(@RequestHeader("Authorization") String authHeader) {
+        String jwtToken = authHeader.substring(7);
+        String username = this.jwtService.extractUsername(jwtToken);
+        String type = accountService.getAccountTypeByUsername(username);
+
+        List<AppointmentEntity> appts;
+        if (type.equals("PATIENT")) {
+            appts = appointmentService.getAppointmentsByPatientUsername(username);
+        } else {
+            appts = appointmentService.getAppointmentsByDoctorUsername(username);
+        }
+
+        return new ResponseEntity<>(appts, OK);
     }
 
-    @GetMapping("/{apptID}")
+    @GetMapping("/doctor/doctorView/{apptID}")
     public ResponseEntity<AppointmentEntity> getAppointmentByID(@PathVariable("apptID") int apptID)
             throws AppointmentIdNotFoundException {
         return new ResponseEntity<>(appointmentService.getAppointmentByID(apptID), OK);
@@ -94,29 +101,41 @@ public class AppointmentController {
         return new ResponseEntity<>(appointmentService.getAppointmentsByPatientUsername(patient_username), OK);
     }
 
-    @GetMapping("/{start_time}_{end_time}")
+    @GetMapping("/allView/{start_time}_{end_time}")
     public ResponseEntity<List<AppointmentEntity>> getAppointmentsBtwStartTimeAndEndDateTime(
+            @RequestHeader("Authorization") String authHeader,
             @PathVariable("start_time") Timestamp start_time,
             @PathVariable("end_time") Timestamp end_time) {
-        List<AppointmentEntity> appts = appointmentService.getAppointmentsBtwStartTimeAndEndTime(start_time, end_time);
+
+        String jwtToken = authHeader.substring(7);
+        String username = jwtService.extractUsername(jwtToken);
+        String type = accountService.getAccountTypeByUsername(username);
+
+        List<AppointmentEntity> appts;
+        if (type.equals("PATIENT")) {
+            appts = appointmentService.getAppointmentsByPatientUsernameBtwStartTimeAndEndTime(username, start_time, end_time);
+        } else {
+            appts = appointmentService.getAppointmentsByDoctorUsernameBtwStartTimeAndEndTime(username, start_time, end_time);
+        }
         return new ResponseEntity<>(appts, OK);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/allView/update")
     public ResponseEntity<AppointmentResponse> updateAppointment(@RequestBody AppointmentRequest request) throws AppointmentDateException, AppointmentIdNotFoundException {
         return ResponseEntity.ok(appointmentService.updateAppointment(request));
     }
     // Update an appointment
 
-    @GetMapping("/date/{date}")
+    // Get appointments for a specific date
+    /*** Get appointments for a specific date in 'YYYY-MM-DD' */
+    @GetMapping("/allView/date/{date}")
     public ResponseEntity<List<AppointmentEntity>> getAppointmentsByDate(@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return new ResponseEntity<>(appointmentService.getAppointmentsByDate(date), OK);
     }
-    // Get appointments for a specific date
 
-    @GetMapping("/count")
+    /*** Get the total number of appointments */
+    @GetMapping("/allView/count")
     public ResponseEntity<Long> getTotalAppointments() {
         return new ResponseEntity<>(appointmentService.getTotalAppointments(), OK);
     }
-    // Get the total number of appointments
 }

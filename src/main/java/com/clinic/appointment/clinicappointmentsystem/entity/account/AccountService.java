@@ -4,6 +4,7 @@ import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.patient.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,12 +15,14 @@ public class AccountService {
 
     private final DoctorRepo doctorRepo;
     private final PatientRepo patientRepo;
+    private final AccountRepo accountRepo;
     private final DoctorBreaksRepo doctorBreaksRepo;
 
     @Autowired
-    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo, DoctorBreaksRepo doctorBreaksRepo) {
+    public AccountService(DoctorRepo doctorRepo, PatientRepo patientRepo, AccountRepo accountRepo, DoctorBreaksRepo doctorBreaksRepo) {
         this.doctorRepo = doctorRepo;
         this.patientRepo = patientRepo;
+        this.accountRepo = accountRepo;
         this.doctorBreaksRepo = doctorBreaksRepo;
     }
 
@@ -58,6 +61,14 @@ public class AccountService {
             accounts.addAll(patientRepo.findAll());
         }
         return accounts;
+    }
+
+    public String getAccountTypeByUsername(String username) {
+        AccountEntity account = accountRepo.findById(username).orElseThrow(
+                () -> new UsernameNotFoundException("User with username " + username + " not found.")
+        );
+
+        return account.getAccountType();
     }
 
     public long getTotalAccountsCount() {

@@ -105,7 +105,7 @@ public class AuthenticationService {
             throw new UsernameNotFoundException("Username or Password is incorrect");
         }
 
-        AccountEntity user = null;
+        AccountEntity user;
         if (doctorUser.isPresent()) {
             user = doctorUser.get();
         } else {
