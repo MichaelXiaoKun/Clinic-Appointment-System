@@ -11,18 +11,16 @@ import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.A
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
-
-import java.time.LocalDate;
-import java.util.stream.Collectors;
 
 
 @Service

@@ -1,7 +1,6 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.appointment;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
-import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
