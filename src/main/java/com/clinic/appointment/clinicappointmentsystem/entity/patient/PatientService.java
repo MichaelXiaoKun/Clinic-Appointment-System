@@ -2,7 +2,6 @@ package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
 import com.clinic.appointment.clinicappointmentsystem.entity.appointment.AppointmentRepo;
-import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

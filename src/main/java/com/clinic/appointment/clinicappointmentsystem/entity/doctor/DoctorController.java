@@ -2,7 +2,6 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
-import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorBreaksOutOfRangeException;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;

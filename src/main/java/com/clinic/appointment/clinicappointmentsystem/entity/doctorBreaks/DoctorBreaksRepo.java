@@ -1,6 +1,5 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks;
 
-import com.clinic.appointment.clinicappointmentsystem.entity.appointment.AppointmentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.sql.Timestamp;
