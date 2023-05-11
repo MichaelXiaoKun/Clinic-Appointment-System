@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -64,10 +65,10 @@ public class DoctorController {
         return new ResponseEntity<>(doctors, OK);
     }
 
-    @GetMapping("/allView/firstname={firstName}_lastname={lastName}")
+    @GetMapping("/allView/fullName")
     public ResponseEntity<List<DoctorEntity>> getDoctorsByFirstNameAndLastName(
-            @PathVariable("firstName") String firstName,
-            @PathVariable("lastName") String lastName) {
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName) {
         List<DoctorEntity> doctors = doctorService.getDoctorsByFirstNameAndLastName(firstName, lastName);
         return new ResponseEntity<>(doctors, OK);
     }
@@ -105,13 +106,13 @@ public class DoctorController {
     @GetMapping("/doctorView/findBreaks")
     public ResponseEntity<List<DoctorBreaksEntity>> getBreaksByStartTimeAndEndTime(
             @RequestHeader("Authorization") String authHeader,
-            @RequestParam(value = "startTime") Timestamp startTime,
-            @RequestParam(value = "endTime") Timestamp endTime) {
+            @RequestParam(value = "start") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+            @RequestParam(value = "end") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime endTime) {
 
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
         List<DoctorBreaksEntity> breaksList = doctorService.getBreaksByUsernameAndStartTimeAndEndTime(
-                username, startTime, endTime);
+                username, Timestamp.valueOf(startTime), Timestamp.valueOf(endTime));
 
         return new ResponseEntity<>(breaksList, OK);
     }
