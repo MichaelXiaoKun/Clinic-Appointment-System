@@ -75,11 +75,24 @@ public class AppointmentService{
     public AppointmentResponse updateAppointment(AppointmentRequest oldRequest, AppointmentRequest newRequst)
             throws AppointmentIdNotFoundException, AppointmentDateException {
 
-        AppointmentResponse response = dailyHandler.cancelAppointment(oldRequest);
-        // TODO: 5/11/23  
-        response = dailyHandler.makeAppointment(newRequst);
-        // TODO: 5/11/23  
-        return new AppointmentResponse();
+        AppointmentResponse response = dailyHandler.makeAppointment(newRequst);
+        if(!response.isSuccess()) {
+            return AppointmentResponse.builder()
+                    .id(0)
+                    .success(false)
+                    .request(newRequst)
+                    .build();
+        }
+        response = dailyHandler.cancelAppointment(oldRequest);
+        if(!response.isSuccess()) {
+            throw new AppointmentIdNotFoundException("No such appointment");
+        }
+
+        return AppointmentResponse.builder()
+                    .id(0)
+                    .success(true)
+                    .request(newRequst)
+                    .build();
     }
 
 
