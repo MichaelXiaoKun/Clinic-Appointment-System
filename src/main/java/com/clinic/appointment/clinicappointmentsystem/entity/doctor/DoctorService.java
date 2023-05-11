@@ -1,6 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
+import com.clinic.appointment.clinicappointmentsystem.entity.appointment.AppointmentRepo;
 import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
@@ -15,9 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DoctorService {
@@ -26,6 +28,7 @@ public class DoctorService {
     private final LoginAttemptService loginAttemptService;
     private final PasswordEncoder passwordEncoder;
     private final DoctorBreaksRepo doctorBreaksRepo;
+    private final AppointmentRepo appointmentRepo;
     private final AppointmentHandler dailyHandler;
 
     @Autowired
@@ -34,12 +37,14 @@ public class DoctorService {
             LoginAttemptService loginAttemptService,
             PasswordEncoder passwordEncoder,
             DoctorBreaksRepo doctorBreaksRepo,
+            AppointmentRepo appointmentRepo,
             AppointmentHandler dailyHandler) {
 
         this.doctorRepo = doctorRepo;
         this.loginAttemptService = loginAttemptService;
         this.passwordEncoder = passwordEncoder;
         this.doctorBreaksRepo = doctorBreaksRepo;
+        this.appointmentRepo = appointmentRepo;
         this.dailyHandler = dailyHandler;
     }
 
@@ -163,6 +168,8 @@ public class DoctorService {
             throw new PasswordMismatchException("Password is incorrect");
         }
 
+        appointmentRepo.deleteAppointmentEntitiesByDoctorUsername(username);
+        doctorBreaksRepo.deleteDoctorBreaksEntitiesByDoctorUsername(username);
         doctorRepo.deleteById(username);
     }
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -70,7 +71,7 @@ public class AppointmentController {
      * Authorization header should be set with a valid JWT token for a patient account.
      */
     @PostMapping("/patient/patientView/make")
-    public ResponseEntity<AppointmentResponse> makeAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
+    public synchronized ResponseEntity<AppointmentResponse> makeAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
         request.setPatientName(username);
@@ -87,7 +88,7 @@ public class AppointmentController {
      * Authorization header should be set with a valid JWT token for a patient account.
      */
     @DeleteMapping("/patient/patientView/cancel")
-    public ResponseEntity<AppointmentResponse> cancelAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
+    public synchronized ResponseEntity<AppointmentResponse> cancelAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
         request.setPatientName(username);
@@ -162,6 +163,7 @@ public class AppointmentController {
     }
 
 
+
     /**
      * Creating a REST API: "GET http://localhost:9999/api/account/appointment/allView/{start_time}_{end_time}"
      * Get appointments for the logged-in user (either patient or doctor) between a specific start and end time.
@@ -173,8 +175,13 @@ public class AppointmentController {
     @GetMapping("/allView/{start_time}_{end_time}")
     public ResponseEntity<List<AppointmentEntity>> getAppointmentsBtwStartTimeAndEndDateTime(
             @RequestHeader("Authorization") String authHeader,
-            @PathVariable("start_time") Timestamp start_time,
-            @PathVariable("end_time") Timestamp end_time) {
+            @RequestParam("start_time") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime st,
+            @RequestParam("end_time") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime et) {
+
+        Timestamp start_time = Timestamp.valueOf(st);
+        Timestamp end_time = Timestamp.valueOf(et);
+        System.out.println(start_time);
+        System.out.println(end_time);
 
         String jwtToken = authHeader.substring(7);
         String username = jwtService.extractUsername(jwtToken);

@@ -2,7 +2,6 @@ package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.domain.HttpResponse;
 import com.clinic.appointment.clinicappointmentsystem.entity.account.config.JwtService;
-import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorBreaksOutOfRangeException;
@@ -95,6 +94,7 @@ public class DoctorController {
         return new ResponseEntity<>(doctors, OK);
     }
 
+
     /**
      * Fetches doctor profiles by first and last name.
      * Creating a REST API: "GET http://localhost:9999/api/account/doctor/allView/firstname={firstName}_lastname={lastName}"
@@ -106,8 +106,8 @@ public class DoctorController {
      */
     @GetMapping("/allView/firstname={firstName}_lastname={lastName}")
     public ResponseEntity<List<DoctorEntity>> getDoctorsByFirstNameAndLastName(
-            @PathVariable("firstName") String firstName,
-            @PathVariable("lastName") String lastName) {
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName) {
         List<DoctorEntity> doctors = doctorService.getDoctorsByFirstNameAndLastName(firstName, lastName);
         return new ResponseEntity<>(doctors, OK);
     }
@@ -188,13 +188,13 @@ public class DoctorController {
     @GetMapping("/doctorView/findBreaks")
     public ResponseEntity<List<DoctorBreaksEntity>> getBreaksByStartTimeAndEndTime(
             @RequestHeader("Authorization") String authHeader,
-            @RequestParam(value = "startTime") Timestamp startTime,
-            @RequestParam(value = "endTime") Timestamp endTime) {
+            @RequestParam(value = "start") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+            @RequestParam(value = "end") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime endTime) {
 
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
         List<DoctorBreaksEntity> breaksList = doctorService.getBreaksByUsernameAndStartTimeAndEndTime(
-                username, startTime, endTime);
+                username, Timestamp.valueOf(startTime), Timestamp.valueOf(endTime));
 
         return new ResponseEntity<>(breaksList, OK);
     }

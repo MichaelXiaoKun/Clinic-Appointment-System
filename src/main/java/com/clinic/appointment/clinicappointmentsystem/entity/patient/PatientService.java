@@ -1,8 +1,7 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.patient;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
-import com.clinic.appointment.clinicappointmentsystem.entity.doctor.DoctorEntity;
-import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
+import com.clinic.appointment.clinicappointmentsystem.entity.appointment.AppointmentRepo;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PatientUsernameNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,19 +19,19 @@ public class PatientService {
     private final PatientRepo patientRepo;
     private final PasswordEncoder passwordEncoder;
     private final LoginAttemptService loginAttemptService;
-    private final DoctorBreaksRepo doctorBreaksRepo;
+    private final AppointmentRepo appointmentRepo;
 
     @Autowired
     public PatientService(
             PatientRepo patientRepo,
             PasswordEncoder passwordEncoder,
             LoginAttemptService loginAttemptService,
-            DoctorBreaksRepo doctorBreaksRepo) {
+            AppointmentRepo appointmentRepo) {
 
         this.patientRepo = patientRepo;
         this.passwordEncoder = passwordEncoder;
         this.loginAttemptService = loginAttemptService;
-        this.doctorBreaksRepo = doctorBreaksRepo;
+        this.appointmentRepo = appointmentRepo;
     }
 
     public List<PatientEntity> getAllPatientProfiles() {
@@ -92,6 +91,7 @@ public class PatientService {
             throw new PatientUsernameNotFoundException("Patient with username: \" + username + \" not found");
         }
 
+        appointmentRepo.deleteAppointmentEntitiesByPatientUsername(username);
         patientRepo.deleteById(username);
     }
 

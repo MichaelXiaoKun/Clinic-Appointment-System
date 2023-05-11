@@ -11,18 +11,16 @@ import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.A
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
-
-import java.time.LocalDate;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -37,7 +35,6 @@ public class AppointmentHandler {
     private final int openAppointmentDay = 7;
     private  final int workStartHour = 8;
     private  final int workEndHour = 20;
-    private int day;
     private Schedule[] schedule;
 
     private static final String NOT_SAME_DAY = "Appointment start and end days are not in the same day";
@@ -104,7 +101,7 @@ public class AppointmentHandler {
             }
             catch (AppointmentDateException e) {
                 System.out.println("Purge invalid appointment: " + entity);
-                if(e.getMessage() == TIME_EXPIRED && time.getCurrent().before(entity.getEndTime())) {
+                if(e.getMessage() == TIME_EXPIRED) {
                     int newMinute = (time.getCurrentMinute() % 15 + 1) * 15 % 60;
                     int newHour = time.getCurrentHour() + newMinute == 0 ? 1:0;
                     // TODO: 5/7/23
