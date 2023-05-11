@@ -15,6 +15,4 @@ public interface DoctorRepo extends JpaRepository<DoctorEntity, String> {
 
     List<DoctorEntity> findDoctorEntitiesByEmail(String email);
 
-
-
 }

@@ -60,6 +60,16 @@ public class AppointmentService{
         return appointmentRepo.findAppointmentEntitiesByStartDateAfterAndEndDateBefore(start_time, end_time);
     }
 
+    public List<AppointmentEntity> getAppointmentsByDoctorUsernameBtwStartTimeAndEndTime(String username, Timestamp start_time, Timestamp end_time) {
+        return appointmentRepo.findAppointmentEntitiesByDoctorUsernameAndStartDateAfterAndEndDateBefore(username, start_time, end_time);
+    }
+
+    public List<AppointmentEntity> getAppointmentsByPatientUsernameBtwStartTimeAndEndTime(String username, Timestamp start_time, Timestamp end_time) {
+        start_time.setTime(start_time.getTime() - 1);
+        end_time.setTime(end_time.getTime() + 1);
+        return appointmentRepo.findAppointmentEntitiesByPatientUsernameAndStartDateAfterAndEndDateBefore(username, start_time, end_time);
+    }
+
     public AppointmentResponse updateAppointment(AppointmentRequest request) throws AppointmentDateException, AppointmentIdNotFoundException {
         return dailyHandler.updateAppointment(request);
     }
