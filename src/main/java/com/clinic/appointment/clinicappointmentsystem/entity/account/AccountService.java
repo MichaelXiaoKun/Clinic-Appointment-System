@@ -60,6 +60,8 @@ public class AccountService {
         return accounts;
     }
 
+
+
     public long getTotalAccountsCount() {
         return doctorRepo.count() + patientRepo.count();
     }
