@@ -25,5 +25,6 @@ This is the prototype for showing how Clinic Appointment System performs with th
 
 ## Testing
 I strongly recommend testing the RESTful APIs using **Postman**, which can be downloaded under https://www.postman.com/downloads/.
-Once the app is downloaded, open **Postman** and you should see a whole screen similar as below: \
+Once the app is downloaded, open **Postman** and you should see a whole screen similar as below (for more details about how to use **Postman**, please view the document from https://learning.postman.com/docs/introduction/overview/): \
 ![image info](./postman_overview.png)
+
