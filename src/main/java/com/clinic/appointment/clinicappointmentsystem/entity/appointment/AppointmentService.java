@@ -65,8 +65,8 @@ public class AppointmentService{
     }
 
     public List<AppointmentEntity> getAppointmentsByPatientUsernameBtwStartTimeAndEndTime(String username, Timestamp start_time, Timestamp end_time) {
-        start_time.setTime(start_time.getTime() - 1);
-        end_time.setTime(end_time.getTime() + 1);
+        start_time.setTime(start_time.getTime() - 1000L);
+        end_time.setTime(end_time.getTime() + 1000L);
         return appointmentRepo.findAppointmentEntitiesByPatientUsernameAndStartDateAfterAndEndDateBefore(username, start_time, end_time);
     }
 

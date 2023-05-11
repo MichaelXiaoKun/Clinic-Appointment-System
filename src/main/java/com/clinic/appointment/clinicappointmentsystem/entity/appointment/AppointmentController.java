@@ -11,9 +11,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -105,13 +105,11 @@ public class AppointmentController {
     @GetMapping("/allView/availableAppointments")
     public ResponseEntity<List<AppointmentEntity>> getAppointmentsBtwStartTimeAndEndDateTime(
             @RequestHeader("Authorization") String authHeader,
-            @RequestParam("start_time") String st,
-            @RequestParam("end_time") String et) {
+            @RequestParam("start_time") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime st,
+            @RequestParam("end_time") @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") LocalDateTime et) {
 
-        Timestamp start_time = new Timestamp(Long.parseLong(st) * 1000L);
-        Timestamp end_time = new Timestamp(Long.parseLong(et) * 1000L);
-        System.out.println(Long.parseLong(st) * 1000L);
-        System.out.println(Long.parseLong(et) * 1000L);
+        Timestamp start_time = Timestamp.valueOf(st);
+        Timestamp end_time = Timestamp.valueOf(et);
         System.out.println(start_time);
         System.out.println(end_time);
 
