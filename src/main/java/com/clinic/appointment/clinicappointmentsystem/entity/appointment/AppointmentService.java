@@ -72,21 +72,14 @@ public class AppointmentService{
 
 
 
-    public AppointmentResponse updateAppointment(AppointmentRequest request)
+    public AppointmentResponse updateAppointment(AppointmentRequest oldRequest, AppointmentRequest newRequst)
             throws AppointmentIdNotFoundException, AppointmentDateException {
 
-        AppointmentEntity appointment = appointmentRepo.findById(request.getAppointmentId())
-                .orElseThrow(() -> new AppointmentIdNotFoundException("Appointment not found"));
-
-        appointment.setAppointmentTitle(request.getAppointmentTitle());
-        appointment.setDoctorUsername(request.getDoctorName());
-        appointment.setDescription(request.getDescription());
-        appointment.setStartDate(Timestamp.valueOf(request.getStartTime()));
-        appointment.setEndDate(Timestamp.valueOf(request.getEndTime()));
-
-        AppointmentEntity updatedAppointment = appointmentRepo.save(appointment);
-
-        return new AppointmentResponse(updatedAppointment);
+        AppointmentResponse response = dailyHandler.cancelAppointment(oldRequest);
+        // TODO: 5/11/23  
+        response = dailyHandler.makeAppointment(newRequst);
+        // TODO: 5/11/23  
+        return new AppointmentResponse();
     }
 
 
