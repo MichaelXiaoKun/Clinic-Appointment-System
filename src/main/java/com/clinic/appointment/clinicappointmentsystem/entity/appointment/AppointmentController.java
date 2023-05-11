@@ -220,14 +220,13 @@ public class AppointmentController {
     @PutMapping("/patient/patientView/update")
     public ResponseEntity<AppointmentResponse> updateAppointment(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody AppointmentRequest oldRequest,
-            @RequestBody AppointmentRequest newRequest
+            @RequestBody UpdateAppointmentRequest updateRequest
     ) throws AppointmentIdNotFoundException, AppointmentDateException {
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
-        oldRequest.setPatientName(username);
-        newRequest.setPatientName(username);
-        return ResponseEntity.ok(appointmentService.updateAppointment(oldRequest, newRequest));
+        updateRequest.getOldRequest().setPatientName(username);
+        updateRequest.getNewRequest().setPatientName(username);
+        return ResponseEntity.ok(appointmentService.updateAppointment(updateRequest.getOldRequest(), updateRequest.getNewRequest()));
     }
 
 

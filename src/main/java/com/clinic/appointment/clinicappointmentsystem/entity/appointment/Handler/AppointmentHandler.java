@@ -123,6 +123,7 @@ public class AppointmentHandler {
 
     public AppointmentResponse makeAppointment(AppointmentRequest request) throws AppointmentDateException {
         // build a entity
+        System.out.println(request);
         Timestamp startTime = Timestamp.valueOf(request.getStartTime());
         Timestamp endTime = Timestamp.valueOf(request.getEndTime());
         AppointmentEntity entity = AppointmentEntity.builder()
@@ -156,6 +157,7 @@ public class AppointmentHandler {
         // Check if appointment exists in the database
         // This currently doesn't make use of the cache property. Can be improved
         //
+        System.out.println(request);
         if (!appointmentRepo.existsById(request.getAppointmentId())) {
             return AppointmentResponse.builder()
                     .id(request.getAppointmentId())
