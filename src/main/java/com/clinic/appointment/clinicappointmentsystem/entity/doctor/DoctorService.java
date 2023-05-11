@@ -1,8 +1,10 @@
 package com.clinic.appointment.clinicappointmentsystem.entity.doctor;
 
 import com.clinic.appointment.clinicappointmentsystem.entity.account.auth.LoginAttemptService;
+import com.clinic.appointment.clinicappointmentsystem.entity.appointment.Handler.AppointmentHandler;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksEntity;
 import com.clinic.appointment.clinicappointmentsystem.entity.doctorBreaks.DoctorBreaksRepo;
+import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.AppointmentDateException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorBreaksOutOfRangeException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.DoctorUsernameNotFoundException;
 import com.clinic.appointment.clinicappointmentsystem.exception.exceptionClass.PasswordMismatchException;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -23,18 +26,21 @@ public class DoctorService {
     private final LoginAttemptService loginAttemptService;
     private final PasswordEncoder passwordEncoder;
     private final DoctorBreaksRepo doctorBreaksRepo;
+    private final AppointmentHandler dailyHandler;
 
     @Autowired
     public DoctorService(
             DoctorRepo doctorRepo,
             LoginAttemptService loginAttemptService,
             PasswordEncoder passwordEncoder,
-            DoctorBreaksRepo doctorBreaksRepo) {
+            DoctorBreaksRepo doctorBreaksRepo,
+            AppointmentHandler dailyHandler) {
 
         this.doctorRepo = doctorRepo;
         this.loginAttemptService = loginAttemptService;
         this.passwordEncoder = passwordEncoder;
         this.doctorBreaksRepo = doctorBreaksRepo;
+        this.dailyHandler = dailyHandler;
     }
 
     public List<DoctorEntity> getAllDoctorProfiles() {
@@ -168,8 +174,21 @@ public class DoctorService {
         return doctorRepo.findDoctorEntitiesByBoardCertification(boardCertification);
     }
 
+    public List<DoctorBreaksEntity> getBreaksByUsername(String username) {
+        return doctorBreaksRepo.findDoctorBreaksEntitiesByDoctorUsername(username);
+    }
+
+    public List<DoctorBreaksEntity> getBreaksByUsernameAndStartTimeAndEndTime(
+            String username,
+            Timestamp startTime,
+            Timestamp endTime) {
+
+        return doctorBreaksRepo.findDoctorBreaksEntitiesByDoctorUsernameAndStartTimeAfterAndEndTimeBefore(
+                        username, startTime, endTime);
+    }
+
     public void addBreaks(String username, Timestamp startTime, Timestamp endTime)
-            throws DoctorBreaksOutOfRangeException {
+            throws DoctorBreaksOutOfRangeException, AppointmentDateException {
 
         Calendar start = Calendar.getInstance();
         start.setTime(startTime);
@@ -179,39 +198,53 @@ public class DoctorService {
         int startHour = start.get(Calendar.HOUR_OF_DAY);
         int endHour = end.get(Calendar.HOUR_OF_DAY);
 
-        if (startHour < 10 || startHour > 17) {
+        if (startHour < 8 || startHour > 19) {
             throw new DoctorBreaksOutOfRangeException("Start time should be set to any hour between 10 AM and 5 PM");
         }
-        if (endHour < 11 || endHour > 18) {
-            throw new DoctorBreaksOutOfRangeException("Start time should be set to any hour between 11 AM and 6 PM");
+        if (endHour < 9 || endHour > 20) {
+            throw new DoctorBreaksOutOfRangeException("end time should be set to any hour between 11 AM and 6 PM");
         }
 
-        List<DoctorBreaksEntity> breaks = doctorBreaksRepo.findDoctorBreaksEntitiesByDoctorUsername(username);
+        List<DoctorBreaksEntity> breaks = doctorBreaksRepo
+                .findDoctorBreaksEntitiesByDoctorUsernameAndEndTimeAfterAndStartTimeBefore(username, startTime, endTime);
 
-        DoctorBreaksEntity doctorBreaks = DoctorBreaksEntity.builder()
+        DoctorBreaksEntity doctorBreak = DoctorBreaksEntity.builder()
+                .breakId((short)AppointmentHandler.getBreakId())
+                .doctorUsername(username)
                 .startTime(startTime)
                 .endTime(endTime)
                 .build();
 
-        breaks.add(doctorBreaks);
+        breaks.add(doctorBreak);
 
-        breaks.sort(Comparator.comparing(DoctorBreaksEntity::getStartTime));
+        Timestamp earliest = startTime, latest = endTime;
+        // merge and delete
+        for (DoctorBreaksEntity curr : breaks) {
+            if (curr.getStartTime().before(earliest)) earliest = curr.getStartTime();
+            if (curr.getEndTime().after(latest)) latest = curr.getEndTime();
+            dailyHandler.cancelPseudoAppointment(curr.getDoctorUsername(), curr.getStartTime(), curr.getEndTime());
+            doctorBreaksRepo.deleteById((int) curr.getBreakId());
+        }
+        System.out.println(earliest + " " + latest);
+        if(dailyHandler.makePseudoAppointment(username, earliest, latest)) {
+            doctorBreak.setStartTime(earliest);
+            doctorBreak.setEndTime(latest);
+            doctorBreaksRepo.save(doctorBreak);
+        };
+    }
 
-        LinkedList<DoctorBreaksEntity> mergedBreaks = new LinkedList<>();
-        mergedBreaks.addLast(breaks.get(0));
+    @Transactional
+    public void cancelBreaks(String username, Timestamp startTime, Timestamp endTime)
+            throws AppointmentDateException {
 
-        for (int id = 1; id < breaks.size(); id++) {
-            DoctorBreaksEntity curr = breaks.get(id);
-            DoctorBreaksEntity prev = mergedBreaks.getLast();
-
-            if (prev.getEndTime().before(curr.getStartTime())) {
-                mergedBreaks.addLast(curr);
-            } else {
-                prev.setEndTime(prev.getEndTime().after(curr.getEndTime()) ? prev.getEndTime() : curr.getEndTime());
-                doctorBreaksRepo.delete(curr);
-            }
+        if (!doctorBreaksRepo.existsDoctorBreaksEntitiesByDoctorUsernameAndStartTimeAndEndTime(username, startTime, endTime)) {
+            System.out.println("Doctor break entity does not exist");
+            return;
         }
 
-        doctorBreaksRepo.saveAll(mergedBreaks);
+        if(dailyHandler.cancelPseudoAppointment(username, startTime, endTime)){
+            doctorBreaksRepo.deleteDoctorBreaksEntitiesByDoctorUsernameAndStartTimeAndEndTime(username, startTime, endTime);
+        }
+
     }
 }
