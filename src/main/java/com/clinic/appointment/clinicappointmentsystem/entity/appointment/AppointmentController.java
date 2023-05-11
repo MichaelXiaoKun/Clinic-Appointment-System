@@ -91,12 +91,12 @@ public class AppointmentController {
         return new ResponseEntity<>(appointmentService.getAppointmentByID(apptID), OK);
     }
 
-    @GetMapping("/doctor/{doctor_username}")
+    @GetMapping("/doctor/doctorView/{doctor_username}")
     public ResponseEntity<List<AppointmentEntity>> getAppointmentsByDoctorUsername(@PathVariable("doctor_username") String doctor_username) {
         return new ResponseEntity<>(appointmentService.getAppointmentsByDoctorUsername(doctor_username), OK);
     }
 
-    @GetMapping("/patient/{patient_username}")
+    @GetMapping("/patient/doctorView/{patient_username}")
     public ResponseEntity<List<AppointmentEntity>> getAppointmentsByPatientUsername(@PathVariable("patient_username") String patient_username) {
         return new ResponseEntity<>(appointmentService.getAppointmentsByPatientUsername(patient_username), OK);
     }
