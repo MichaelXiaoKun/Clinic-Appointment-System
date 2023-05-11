@@ -63,6 +63,7 @@ public class AccountService {
         return accounts;
     }
 
+
     public String getAccountTypeByUsername(String username) {
         AccountEntity account = accountRepo.findById(username).orElseThrow(
                 () -> new UsernameNotFoundException("User with username " + username + " not found.")
@@ -70,6 +71,7 @@ public class AccountService {
 
         return account.getAccountType();
     }
+
 
     public long getTotalAccountsCount() {
         return doctorRepo.count() + patientRepo.count();

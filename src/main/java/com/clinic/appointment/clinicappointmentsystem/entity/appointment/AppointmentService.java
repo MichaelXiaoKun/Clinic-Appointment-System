@@ -61,6 +61,7 @@ public class AppointmentService{
 
     public List<AppointmentEntity> getAppointmentsByDoctorUsernameBtwStartTimeAndEndTime(String username, Timestamp start_time, Timestamp end_time) {
         return appointmentRepo.findAppointmentEntitiesByDoctorUsernameAndStartDateAfterAndEndDateBefore(username, start_time, end_time);
+
     }
 
     public List<AppointmentEntity> getAppointmentsByPatientUsernameBtwStartTimeAndEndTime(String username, Timestamp start_time, Timestamp end_time) {
@@ -69,9 +70,26 @@ public class AppointmentService{
         return appointmentRepo.findAppointmentEntitiesByPatientUsernameAndStartDateAfterAndEndDateBefore(username, start_time, end_time);
     }
 
-    public AppointmentResponse updateAppointment(AppointmentRequest request) throws AppointmentDateException, AppointmentIdNotFoundException {
-        return dailyHandler.updateAppointment(request);
+
+
+    public AppointmentResponse updateAppointment(AppointmentRequest request)
+            throws AppointmentIdNotFoundException, AppointmentDateException {
+
+        AppointmentEntity appointment = appointmentRepo.findById(request.getAppointmentId())
+                .orElseThrow(() -> new AppointmentIdNotFoundException("Appointment not found"));
+
+        appointment.setAppointmentTitle(request.getAppointmentTitle());
+        appointment.setDoctorUsername(request.getDoctorName());
+        appointment.setDescription(request.getDescription());
+        appointment.setStartDate(Timestamp.valueOf(request.getStartTime()));
+        appointment.setEndDate(Timestamp.valueOf(request.getEndTime()));
+
+        AppointmentEntity updatedAppointment = appointmentRepo.save(appointment);
+
+        return new AppointmentResponse(updatedAppointment);
     }
+
+
 
 
     public List<AppointmentEntity> getAppointmentsByDate(LocalDate date) {
