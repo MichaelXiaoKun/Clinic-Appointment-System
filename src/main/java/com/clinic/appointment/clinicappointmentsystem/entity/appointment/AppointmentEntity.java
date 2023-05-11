@@ -57,7 +57,7 @@ public class AppointmentEntity {
         return apptTitle;
     }
 
-    public void setApptTitle(String apptTitle) {
+    public void setAppointmentTitle(String apptTitle) {
         this.apptTitle = apptTitle;
     }
 
