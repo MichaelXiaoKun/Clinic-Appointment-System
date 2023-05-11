@@ -41,7 +41,7 @@ public class AppointmentController {
     }
 
      /***
-     Creating a REST API: "POST http://localhost:8080/api/account/appointment/patient/patientView/make"
+     Creating a REST API: "POST http://localhost:9999/api/account/appointment/patient/patientView/make"
      Schedule an appointment for logged-in patients
      Passing in JSON (date should be in "yyyy-MM-dd HH:mm:ss"):
       {
@@ -55,7 +55,7 @@ public class AppointmentController {
      */
 
     /**
-     * Creating a REST API: "POST http://localhost:8080/api/account/appointment/patient/patientView/make"
+     * Creating a REST API: "POST http://localhost:9999/api/account/appointment/patient/patientView/make"
      * Schedule an appointment for logged-in patients
      * Passing in JSON (date should be in "yyyy-MM-dd HH:mm:ss"):
      * {
@@ -79,7 +79,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "DELETE http://localhost:8080/api/account/appointment/patient/patientView/cancel/{appointmentId}"
+     * Creating a REST API: "DELETE http://localhost:9999/api/account/appointment/patient/patientView/cancel/{appointmentId}"
      * Cancel an existing appointment for logged-in patients
      * An appointmentId needs to be passed in the URL as a path variable.
      *
@@ -96,7 +96,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "GET http://localhost:8080/api/account/appointment/allView/myAppointments"
+     * Creating a REST API: "GET http://localhost:9999/api/account/appointment/allView/myAppointments"
      * Get all appointments for the logged-in user (either patient or doctor).
      *
      * In Postman, select GET as the method, input the URL.
@@ -120,7 +120,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "GET http://localhost:8080/api/account/appointment/doctor/doctorView/{apptID}"
+     * Creating a REST API: "GET http://localhost:9999/api/account/appointment/doctor/doctorView/{apptID}"
      * Get specific appointment details by appointment ID.
      * An appointmentId needs to be passed in the URL as a path variable.
      *
@@ -135,7 +135,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "GET http://localhost:8080/api/account/appointment/doctor/doctorView/{doctor_username}"
+     * Creating a REST API: "GET http://localhost:9999/api/account/appointment/doctor/doctorView/{doctor_username}"
      * Get all appointments associated with a specific doctor's username.
      * A doctor's username needs to be passed in the URL as a path variable.
      *
@@ -149,7 +149,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "GET http://localhost:8080/api/account/appointment/patient/doctorView/{patient_username}"
+     * Creating a REST API: "GET http://localhost:9999/api/account/appointment/patient/doctorView/{patient_username}"
      * Get all appointments associated with a specific patient's username.
      * A patient's username needs to be passed in the URL as a path variable.
      *
@@ -163,7 +163,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "GET http://localhost:8080/api/account/appointment/allView/{start_time}_{end_time}"
+     * Creating a REST API: "GET http://localhost:9999/api/account/appointment/allView/{start_time}_{end_time}"
      * Get appointments for the logged-in user (either patient or doctor) between a specific start and end time.
      * The start_time and end_time (format: yyyy-MM-dd HH:mm:ss) need to be passed in the URL as path variables.
      *
@@ -191,7 +191,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "PUT http://localhost:8080/api/account/appointment/patient/patientView/update"
+     * Creating a REST API: "PUT http://localhost:9999/api/account/appointment/patient/patientView/update"
      * Update an existing appointment for logged-in patients
      * Passing in JSON (date should be in "yyyy-MM-dd HH:mm:ss"):
      * {
@@ -202,6 +202,10 @@ public class AppointmentController {
      *     "startTime": ...,
      *     "endTime": ...
      * }
+     * 
+     * This method will update the appointment's title, doctor's name, description,
+     * start time and end time according to the provided appointment ID.
+     * Note: The appointment's ID and the user's username cannot be changed.
      *
      * In Postman, select PUT as the method, input the URL, and set the request body to raw JSON.
      * Authorization header should be set with a valid JWT token for a patient account.
@@ -213,7 +217,7 @@ public class AppointmentController {
     ) throws AppointmentIdNotFoundException, AppointmentDateException {
         String jwtToken = authHeader.substring(7);
         String username = this.jwtService.extractUsername(jwtToken);
-        request.setPatientName(username);
+        request.setDoctorName(username);
         return ResponseEntity.ok(appointmentService.updateAppointment(request));
     }
 
@@ -221,7 +225,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "GET http://localhost:8080/api/account/appointment/doctor/doctorView/date/{date}"
+     * Creating a REST API: "GET http://localhost:9999/api/account/appointment/doctor/doctorView/date/{date}"
      * Get appointments for a specific date
      * A date needs to be passed in the URL as a path variable (date should be in "yyyy-MM-dd").
      *
@@ -235,7 +239,7 @@ public class AppointmentController {
 
 
     /**
-     * Creating a REST API: "GET http://localhost:8080/api/account/appointment/doctor/doctorView/count"
+     * Creating a REST API: "GET http://localhost:9999/api/account/appointment/doctor/doctorView/count"
      * Get total number of appointments for the logged-in patient.
      *
      * In Postman, select GET as the method, input the URL.
