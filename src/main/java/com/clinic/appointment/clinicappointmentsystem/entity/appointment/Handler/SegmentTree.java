@@ -76,11 +76,6 @@ public class SegmentTree {
         node.booked = node.left.booked | node.right.booked;
     }
 
-//        public boolean check() {
-//            System.out.println("Check: " + root.left.right.left.right.booked);
-//            return root.left.right.left.right.booked;
-//        }
-
     // update the state of reservation of interval [l, r] in interval [start, end] to be book
     private void update(Node node, int start, int end, int l, int r, boolean booked) {
         // find the valid interval
