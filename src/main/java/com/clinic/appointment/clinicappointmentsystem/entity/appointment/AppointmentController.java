@@ -44,6 +44,19 @@ public class AppointmentController {
         this.jwtService = jwtService;
     }
 
+     /***
+     Creating a REST API: "POST http://localhost:8080/api/account/appointment/patient/patientView/make"
+     Schedule an appointment for logged-in patients
+     Passing in JSON (date should be in "yyyy-MM-dd HH:mm:ss"):
+      {
+          "appointmentTitle": ...,
+          "patientName": ...,
+          "doctorName": ...,
+          "description": ...,
+          "startTime": ...,
+          "endTime": ...
+      }
+     */
     @PostMapping("/patient/patientView/make")
     public ResponseEntity<AppointmentResponse> makeAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody AppointmentRequest request) throws AppointmentDateException {
         String jwtToken = authHeader.substring(7);
