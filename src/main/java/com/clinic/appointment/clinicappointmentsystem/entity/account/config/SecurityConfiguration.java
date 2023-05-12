@@ -44,6 +44,7 @@ public class SecurityConfiguration {
                 .requestMatchers(
                         "/api/account/patient/doctorView/**",
                         "/api/account/doctor/doctorView/**").hasAuthority(Role.DOCTOR.getAuthority())
+                .requestMatchers("/api/account/adminView/**").hasAuthority(Role.ADMIN.getAuthority())
                 .anyRequest()
                 .authenticated()
                 .and()

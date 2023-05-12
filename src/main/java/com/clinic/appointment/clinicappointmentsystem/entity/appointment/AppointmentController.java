@@ -41,20 +41,6 @@ public class AppointmentController {
         this.jwtService = jwtService;
     }
 
-     /***
-     Creating a REST API: "POST http://localhost:9999/api/account/appointment/patient/patientView/make"
-     Schedule an appointment for logged-in patients
-     Passing in JSON (date should be in "yyyy-MM-dd HH:mm:ss"):
-      {
-          "appointmentTitle": ...,
-          "patientName": ...,
-          "doctorName": ...,
-          "description": ...,
-          "startTime": ...,
-          "endTime": ...
-      }
-     */
-
     /**
      * Creating a REST API: "POST http://localhost:9999/api/account/appointment/patient/patientView/make"
      * Schedule an appointment for logged-in patients
