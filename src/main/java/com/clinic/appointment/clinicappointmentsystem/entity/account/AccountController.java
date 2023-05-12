@@ -18,7 +18,7 @@ public class AccountController {
 
     /**
      * Greetings message endpoint.
-     * Creating a REST API: "GET http://localhost:9999/api/account/greetings"
+     * Creating a REST API: "GET http://localhost:9999/api/account/adminView/greetings"
      * Returns a greetings message.
      *
      * @return Greetings message.
@@ -30,7 +30,7 @@ public class AccountController {
 
     /**
      * Fetches accounts by first name and last name.
-     * Creating a REST API: "GET http://localhost:9999/api/account/{firstName}_{lastName}"
+     * Creating a REST API: "GET http://localhost:9999/api/account/adminView/fullName"
      * Returns account profiles associated with the given first name and last name.
      *
      * @param firstName The first name of the account holders.
@@ -48,7 +48,7 @@ public class AccountController {
 
     /**
      * Fetches all accounts.
-     * Creating a REST API: "GET http://localhost:9999/api/account/all"
+     * Creating a REST API: "GET http://localhost:9999/api/account/adminView/all"
      * Returns all account profiles.
      *
      * @return A list of all accounts.
@@ -61,7 +61,7 @@ public class AccountController {
 
     /**
      * Fetches accounts by email.
-     * Creating a REST API: "GET http://localhost:9999/api/account/email"
+     * Creating a REST API: "GET http://localhost:9999/api/account/adminView/email"
      * Returns account profiles associated with the given email.
      *
      * @param email The email of the account holders.
@@ -75,7 +75,7 @@ public class AccountController {
 
     /**
      * Fetches accounts by account type.
-     * Creating a REST API: "GET http://localhost:9999/api/account/type"
+     * Creating a REST API: "GET http://localhost:9999/api/account/adminView/type"
      * Returns account profiles associated with the given account type.
      *
      * @param accountType The type of the accounts.
@@ -89,7 +89,7 @@ public class AccountController {
 
     /**
      * Fetches the total number of accounts.
-     * Creating a REST API: "GET http://localhost:9999/api/account/count"
+     * Creating a REST API: "GET http://localhost:9999/api/account/adminView/count"
      * Returns the total number of accounts.
      *
      * @return The total number of accounts.
