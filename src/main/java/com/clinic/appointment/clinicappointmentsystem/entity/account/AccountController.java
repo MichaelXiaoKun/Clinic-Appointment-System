@@ -23,7 +23,7 @@ public class AccountController {
      *
      * @return Greetings message.
      */
-    @GetMapping("/greetings")
+    @GetMapping("/adminView/greetings")
     public ResponseEntity<String> sayHello() {
         return ResponseEntity.ok("Hello! Bro, How are you?");
     }
@@ -37,10 +37,10 @@ public class AccountController {
      * @param lastName The last name of the account holders.
      * @return A list of accounts with the specified first name and last name.
      */
-    @GetMapping("/{firstName}_{lastName}")
+    @GetMapping("/adminView/fullName")
     public ResponseEntity<List<AccountEntity>> getAccountsByFirstNameAndLastName(
-            @PathVariable("firstName") String firstName,
-            @PathVariable("lastName") String lastName) {
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName) {
 
         List<AccountEntity> accounts = accountService.getAccountsByFirstNameAndLastName(firstName, lastName);
         return new ResponseEntity<>(accounts, OK);
@@ -53,7 +53,7 @@ public class AccountController {
      *
      * @return A list of all accounts.
      */
-    @GetMapping("/all")
+    @GetMapping("/adminView/all")
     public ResponseEntity<List<AccountEntity>> getAllAccounts() {
         List<AccountEntity> accounts = accountService.getAllAccounts();
         return new ResponseEntity<>(accounts, OK);
@@ -67,7 +67,7 @@ public class AccountController {
      * @param email The email of the account holders.
      * @return A list of accounts with the specified email.
      */
-    @GetMapping("/email")
+    @GetMapping("/adminView/email")
     public ResponseEntity<List<AccountEntity>> findAccountsByEmail(@RequestParam("email") String email) {
         List<AccountEntity> accounts = accountService.getAccountsByEmail(email);
         return new ResponseEntity<>(accounts, OK);
@@ -81,7 +81,7 @@ public class AccountController {
      * @param accountType The type of the accounts.
      * @return A list of accounts with the specified account type.
      */
-    @GetMapping("/type")
+    @GetMapping("/adminView/type")
     public ResponseEntity<List<AccountEntity>> findAccountsByType(@RequestParam("type") String accountType) {
         List<AccountEntity> accounts = accountService.getAccountsByType(accountType);
         return new ResponseEntity<>(accounts, OK);
@@ -94,7 +94,7 @@ public class AccountController {
      *
      * @return The total number of accounts.
      */
-    @GetMapping("/count")
+    @GetMapping("/adminView/count")
     public ResponseEntity<Long> getTotalAccountsCount() {
         long count = accountService.getTotalAccountsCount();
         return new ResponseEntity<>(count, OK);
