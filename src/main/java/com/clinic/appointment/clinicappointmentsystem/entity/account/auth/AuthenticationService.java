@@ -102,7 +102,7 @@ public class AuthenticationService {
         Optional<PatientEntity> patientUser = patientRepo.findById(request.getUsername());
 
         if (doctorUser.isEmpty() && patientUser.isEmpty()) {
-            throw new UsernameNotFoundException("Username or Password is incorrect");
+            throw new UsernameNotFoundException("Username is incorrect");
         }
 
         AccountEntity user;
@@ -120,7 +120,7 @@ public class AuthenticationService {
             throw new EmailMismatchException("Email is not in the record with username " + request.getUsername());
         }
 
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         String jwtToken = jwtService.generateToken(
                 user.getAccountType()
